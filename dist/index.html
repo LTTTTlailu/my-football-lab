@@ -114,6 +114,7 @@
     .section-head { display:flex; justify-content:space-between; align-items:flex-end; gap:16px; margin-bottom:18px; }
     .section-head p { margin:4px 0 0; color:var(--muted); font-size:.84rem; }
     .tabs { display:flex; gap:5px; padding:4px; width:max-content; max-width:100%; overflow:auto; border:1px solid var(--line); border-radius:13px; background:#0b1613; }
+    .tabs::-webkit-scrollbar { display:none; }
     .tab { border:0; background:transparent; color:var(--muted); border-radius:9px; padding:8px 13px; font-size:.8rem; font-weight:700; cursor:pointer; white-space:nowrap; }
     .tab.active { background:var(--panel-2); color:var(--ink); }
     .tab-panel { display:none; }
@@ -126,6 +127,32 @@
     .plan-item p { margin:3px 0 0; color:var(--muted); font-size:.74rem; }
     .plan-time { text-align:right; font-size:.76rem; color:var(--muted); }
     .plan-time b { display:block; color:var(--ink); font-size:.86rem; }
+    .training-builder { display:grid; grid-template-columns:390px minmax(0,1fr); gap:20px; align-items:start; }
+    .builder-card { padding:20px; position:sticky; top:24px; }
+    .builder-card h2 { margin:0; font-size:1.08rem; }
+    .builder-card > p { margin:4px 0 18px; color:var(--muted); font-size:.78rem; }
+    .choice-group { padding:14px 0; border-top:1px solid var(--line); }
+    .choice-head { display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:9px; }
+    .choice-head b { font-size:.78rem; }
+    .choice-head span { color:var(--muted); font-size:.68rem; }
+    .choices { display:flex; flex-wrap:wrap; gap:7px; }
+    .choice { border:1px solid var(--line); background:var(--panel-2); color:var(--muted); min-height:38px; padding:7px 11px; border-radius:10px; font-size:.73rem; cursor:pointer; }
+    .choice:hover { color:var(--ink); }
+    .choice.active { color:#0a160d; border-color:var(--lime); background:var(--lime); font-weight:850; }
+    .choice.multi.active { color:var(--lime); background:rgba(183,255,82,.09); }
+    .plan-result { padding:20px; }
+    .plan-result-head { display:flex; justify-content:space-between; gap:14px; align-items:flex-start; margin-bottom:15px; }
+    .plan-result-head h2 { margin:3px 0 3px; font-size:1.25rem; letter-spacing:-.03em; }
+    .plan-result-head p { margin:0; color:var(--muted); font-size:.76rem; }
+    .fit-note { display:flex; align-items:flex-start; gap:10px; padding:11px 12px; border-radius:12px; background:rgba(183,255,82,.07); color:#c9d8d2; font-size:.72rem; margin-bottom:14px; }
+    .fit-note b { color:var(--lime); white-space:nowrap; }
+    .setup-list { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:15px; }
+    .setup-item { padding:10px; border:1px solid var(--line); border-radius:11px; background:#0b1613; }
+    .setup-item span { display:block; color:var(--muted); font-size:.64rem; }
+    .setup-item b { display:block; margin-top:3px; font-size:.74rem; }
+    .measure-badge { display:inline-flex; align-items:center; border-radius:7px; padding:3px 6px; margin-left:6px; font-size:.61rem; color:var(--blue); background:rgba(104,168,255,.1); vertical-align:1px; }
+    .plan-actions { display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap; margin-top:16px; }
+    .plan-actions small { color:var(--muted); font-size:.68rem; }
     .filters { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:15px; }
     .filter-btn { border:1px solid var(--line); background:var(--panel); color:var(--muted); padding:7px 11px; border-radius:999px; font-size:.75rem; cursor:pointer; }
     .filter-btn.active { color:#0a160d; background:var(--lime); border-color:var(--lime); font-weight:800; }
@@ -254,6 +281,38 @@
     .set-dots { display:flex; justify-content:center; gap:9px; margin-bottom:22px; }
     .set-dot { width:14px; height:14px; border-radius:50%; background:var(--panel-2); border:1px solid var(--line); }
     .set-dot.done { background:var(--lime); border-color:var(--lime); }
+    .hidden { display:none !important; }
+    .prep-title { margin:0 0 5px; font-size:1.4rem; letter-spacing:-.03em; }
+    .prep-copy { margin:0 0 18px; color:var(--muted); font-size:.8rem; }
+    .prep-checks { display:grid; gap:8px; margin:15px 0 18px; }
+    .prep-check { display:grid; grid-template-columns:28px 1fr; gap:10px; align-items:center; padding:11px; background:var(--panel-2); border:1px solid var(--line); border-radius:12px; }
+    .prep-check span { width:26px; height:26px; border-radius:8px; display:grid; place-items:center; background:rgba(183,255,82,.1); color:var(--lime); font-size:.7rem; }
+    .prep-check b { display:block; font-size:.76rem; }
+    .prep-check small { color:var(--muted); font-size:.67rem; }
+    .session-progress { height:5px; border-radius:999px; background:var(--panel-2); overflow:hidden; margin-bottom:18px; }
+    .session-progress span { display:block; height:100%; width:25%; background:var(--lime); transition:width .25s ease; }
+    .runtime-layout { display:grid; grid-template-columns:minmax(210px,.8fr) minmax(260px,1.2fr); gap:16px; align-items:stretch; }
+    .runtime-visual { min-height:300px; border-radius:17px; padding:14px; background:linear-gradient(155deg,#205f3f,#123625); position:relative; overflow:hidden; border:1px solid rgba(255,255,255,.16); }
+    .runtime-visual .drill-visual { height:190px; margin-bottom:12px; }
+    .runtime-visual b { display:block; font-size:.76rem; }
+    .runtime-visual p { margin:4px 0 0; color:#c4d3cd; font-size:.7rem; }
+    .runtime-main { display:flex; flex-direction:column; text-align:center; padding:5px 0; }
+    .runtime-main .counter { color:var(--lime); text-transform:uppercase; letter-spacing:.12em; font-size:.68rem; font-weight:850; }
+    .runtime-main h3 { margin:7px 0 2px; font-size:1.5rem; letter-spacing:-.03em; }
+    .runtime-main > p { margin:0; color:var(--muted); font-size:.76rem; }
+    .timer.runtime { font-size:3.8rem; margin:18px 0 10px; }
+    .round-status { min-height:28px; color:#cbd8d3; font-size:.75rem; margin-bottom:12px; }
+    .score-controls { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin:12px 0; }
+    .score-button { border:1px solid var(--line); background:var(--panel-2); border-radius:13px; padding:12px 8px; cursor:pointer; }
+    .score-button b { display:block; font-size:1.45rem; }
+    .score-button span { color:var(--muted); font-size:.68rem; }
+    .score-button.good b { color:var(--lime); }
+    .next-up { margin-top:auto; padding-top:13px; border-top:1px solid var(--line); color:var(--muted); font-size:.68rem; }
+    .session-utility { display:flex; justify-content:center; gap:8px; margin-top:10px; }
+    .session-utility button { border:0; background:transparent; color:var(--muted); padding:7px; font-size:.7rem; cursor:pointer; }
+    .rpe-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:7px; margin:16px 0; }
+    .rpe { border:1px solid var(--line); background:var(--panel-2); border-radius:11px; padding:10px 2px; cursor:pointer; }
+    .rpe.active { border-color:var(--lime); color:var(--lime); }
     .form-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:13px; }
     .field.full { grid-column:1 / -1; }
     .field label { display:block; color:var(--muted); font-size:.72rem; margin-bottom:6px; }
@@ -272,7 +331,11 @@
       .app-shell { display:block; }
       .sidebar { display:none; }
       .main { padding:18px 14px 96px; }
-      .grid-home, .training-grid, .matches-grid, .profile-grid { grid-template-columns:1fr; }
+      #screen-training .section-head { align-items:stretch; flex-direction:column; }
+      #screen-training .tabs { width:100%; }
+      #screen-training .tab { flex:1; }
+      .grid-home, .training-grid, .training-builder, .matches-grid, .profile-grid { grid-template-columns:1fr; }
+      .builder-card { position:static; }
       .mobile-nav { display:grid; grid-template-columns:repeat(5,1fr); position:fixed; left:10px; right:10px; bottom:10px; z-index:40; padding:6px; border:1px solid var(--line); border-radius:18px; background:rgba(11,22,19,.94); backdrop-filter:blur(18px); box-shadow:var(--shadow); }
       .mobile-nav .nav-btn { display:grid; justify-items:center; gap:1px; padding:7px 2px; font-size:.62rem; border-radius:12px; box-shadow:none; }
       .mobile-nav .nav-btn.active { background:var(--panel-2); }
@@ -296,6 +359,11 @@
       .performance { grid-template-columns:repeat(2,1fr); }
       .frame-list { grid-template-columns:1fr; }
       .form-grid { grid-template-columns:1fr; }
+      .setup-list { grid-template-columns:1fr 1fr; }
+      .runtime-layout { grid-template-columns:1fr; }
+      .runtime-visual { min-height:auto; }
+      .runtime-visual .drill-visual { height:145px; }
+      .timer.runtime { font-size:3.2rem; }
       .field.full { grid-column:auto; }
       .flow { grid-template-columns:1fr; }
       .flow-arrow { transform:rotate(90deg); text-align:center; }
@@ -353,9 +421,27 @@
       </section>
 
       <section class="screen" id="screen-training">
-        <div class="section-head"><div><h2 class="section-title">训练中心</h2><p>按人数、时间和器材组织一节像健身 App 一样可执行的足球训练。</p></div><div class="tabs" role="tablist" data-tabgroup="training"><button class="tab active" data-tab="plan">我的计划</button><button class="tab" data-tab="library">动作库</button><button class="tab" data-tab="history">历史</button></div></div>
+        <div class="section-head"><div><h2 class="section-title">训练中心</h2><p>告诉我今天实际有什么，马上得到一节能落地的训练。</p></div><div class="tabs" role="tablist" data-tabgroup="training"><button class="tab active" data-tab="plan">快速训练</button><button class="tab" data-tab="library">动作库</button><button class="tab" data-tab="history">历史</button></div></div>
         <div class="tab-panel active" data-panel="plan">
-          <div class="training-grid"><article class="card"><div class="card-body"><div class="card-header"><div><h2>今日个人训练</h2><p>62 分钟 · 足球 ×1 · 标志盘 ×4 · 一面墙</p></div><span class="pill live">4 个阶段</span></div><div class="plan-list"><div class="plan-item"><div class="order">01</div><div><strong>动态热身</strong><p>髋部激活 · 开合跳 · 触球唤醒</p></div><div class="plan-time"><b>8 min</b>连续</div></div><div class="plan-item"><div class="order">02</div><div><strong>Inside–Outside 控球</strong><p>左右脚各 2 组 · 组间休息 30 秒</p></div><div class="plan-time"><b>4 × 60s</b>计时</div></div><div class="plan-item"><div class="order">03</div><div><strong>双脚墙传</strong><p>先两脚，再一脚；记录成功次数</p></div><div class="plan-time"><b>4 × 50</b>次数</div></div><div class="plan-item"><div class="order">04</div><div><strong>20m 冲刺</strong><p>完全恢复后开始下一组</p></div><div class="plan-time"><b>6 组</b>75s 休息</div></div></div><div class="button-row" style="margin-top:18px"><button class="btn primary" id="startWorkout2">▶ 开始训练</button><button class="btn ghost" id="switchMulti">切换为 3 人训练</button></div></div></article><aside class="card side-summary"><div class="card-body"><div class="card-header"><div><h2>本周进度</h2><p>目标 240 分钟</p></div></div><div class="ring"><span><b>76%</b>182 / 240 分</span></div><div class="profile-line"><span>完成训练</span><b>3 次</b></div><div class="profile-line"><span>控球</span><b>72 分</b></div><div class="profile-line"><span>传球</span><b>64 分</b></div><div class="profile-line"><span>体能</span><b>46 分</b></div></div></aside></div>
+          <div class="training-builder">
+            <article class="card builder-card">
+              <h2>现在能怎么练？</h2><p>按到场后的真实情况选择，计划会避开用不上的器材和人数。</p>
+              <div class="choice-group"><div class="choice-head"><b>几个人</b><span>包含你</span></div><div class="choices" data-choice-group="people"><button class="choice active" data-value="1">1 人</button><button class="choice" data-value="2">2 人</button><button class="choice" data-value="3">3 人</button><button class="choice" data-value="4">4 人</button><button class="choice" data-value="5">5–8 人</button></div></div>
+              <div class="choice-group"><div class="choice-head"><b>有多少时间</b><span>含热身</span></div><div class="choices" data-choice-group="duration"><button class="choice" data-value="20">20 分钟</button><button class="choice active" data-value="40">40 分钟</button><button class="choice" data-value="60">60 分钟</button><button class="choice" data-value="90">90 分钟</button></div></div>
+              <div class="choice-group"><div class="choice-head"><b>场地</b><span>按可用空间</span></div><div class="choices" data-choice-group="space"><button class="choice active" data-value="小空地">小空地</button><button class="choice" data-value="半场">半场</button><button class="choice" data-value="全场">全场</button><button class="choice" data-value="室内">室内</button></div></div>
+              <div class="choice-group"><div class="choice-head"><b>器材</b><span>可多选</span></div><div class="choices" data-choice-group="equipment"><button class="choice multi active" data-value="足球">足球</button><button class="choice multi active" data-value="标志盘">标志盘</button><button class="choice multi active" data-value="墙面">墙面</button><button class="choice multi" data-value="小球门">小球门</button><button class="choice multi" data-value="大球门">大球门</button></div></div>
+              <div class="choice-group"><div class="choice-head"><b>今天重点</b><span>只选一个</span></div><div class="choices" data-choice-group="focus"><button class="choice active" data-value="第一脚触球">第一脚触球</button><button class="choice" data-value="传球">传球</button><button class="choice" data-value="控球">控球</button><button class="choice" data-value="射门">射门</button><button class="choice" data-value="体能">体能</button></div></div>
+              <div class="choice-group"><div class="choice-head"><b>今天状态</b><span>决定强度</span></div><div class="choices" data-choice-group="readiness"><button class="choice" data-value="轻松">很有劲</button><button class="choice active" data-value="正常">正常</button><button class="choice" data-value="有点累">有点累</button></div></div>
+              <div class="button-row" style="margin-top:14px"><button class="btn primary" id="generatePlan">生成可执行计划</button><button class="btn ghost" id="useLastPlan">沿用上次</button></div>
+            </article>
+            <article class="card plan-result">
+              <div class="plan-result-head"><div><span class="pill live">已适配现场</span><h2 id="planTitle">40 分钟 · 单人第一脚触球</h2><p id="planMeta">小空地 · 正常强度 · 4 个阶段</p></div><span class="pill" id="planWait">等待时间少</span></div>
+              <div class="fit-note" id="planFit"><b>为什么这样排</b><span>先用球热身，再练第一脚触球；墙面可连续回球，一个人也不用捡球等待。</span></div>
+              <div class="setup-list" id="setupList"></div>
+              <div class="plan-list" id="generatedPlan"></div>
+              <div class="plan-actions"><small>训练中可跳过动作，也可随时提前结束。</small><button class="btn primary" id="startWorkout2">▶ 去摆场，开始训练</button></div>
+            </article>
+          </div>
         </div>
         <div class="tab-panel" data-panel="library">
           <article class="card"><div class="card-body"><div class="card-header"><div><h2>动作库</h2><p id="filterSummary">全部人数 · 全部时长 · 12 个动作</p></div><button class="btn primary small" id="autoPlan">智能组合训练</button></div><div class="filters" id="peopleFilters"><button class="filter-btn active" data-filter="all">全部</button><button class="filter-btn" data-filter="1">单人</button><button class="filter-btn" data-filter="2">2 人</button><button class="filter-btn" data-filter="3">3–4 人</button><button class="filter-btn" data-filter="5">5–8 人</button></div><div class="library-grid" id="drillLibrary"></div></div></article>
@@ -382,7 +468,13 @@
     <button class="nav-btn active" data-screen="home"><span class="nav-icon">⌂</span>首页</button><button class="nav-btn" data-screen="training"><span class="nav-icon">◴</span>训练</button><button class="nav-btn" data-screen="matches"><span class="nav-icon">⚽</span>比赛</button><button class="nav-btn" data-screen="tactics"><span class="nav-icon">↗</span>战术</button><button class="nav-btn" data-screen="profile"><span class="nav-icon">◎</span>我的</button>
   </nav>
 
-  <div class="modal-backdrop" id="workoutModal" role="dialog" aria-modal="true" aria-label="训练计时"><div class="modal"><div class="modal-head"><h2>今日训练 · 进行中</h2><button class="close" data-close="workoutModal">×</button></div><div class="modal-body"><div class="session-now"><span class="counter" id="exerciseCount">动作 1 / 4</span><h3 id="exerciseName">动态热身</h3><p id="exerciseTarget">连续 8 分钟 · 激活身体</p><div class="timer" id="timer">00:00</div><div class="set-dots" id="setDots"><span class="set-dot"></span><span class="set-dot"></span><span class="set-dot"></span><span class="set-dot"></span></div><div class="button-row" style="justify-content:center"><button class="btn ghost" id="pauseTimer">暂停</button><button class="btn primary" id="completeSet">完成本组 ✓</button></div></div></div></div></div>
+  <div class="modal-backdrop" id="workoutModal" role="dialog" aria-modal="true" aria-label="训练执行">
+    <div class="modal wide"><div class="modal-head"><h2 id="sessionModalTitle">训练准备</h2><button class="close" data-close="workoutModal">×</button></div><div class="modal-body">
+      <section id="prepScreen"><span class="pill live" id="prepMeta">40 分钟 · 单人训练</span><h3 class="prep-title" id="prepTitle">先把场地摆好，再按开始</h3><p class="prep-copy">不用边看说明边移动器材。确认下面三件事，训练开始后只保留必要操作。</p><div class="prep-checks" id="prepChecks"></div><div class="button-row" style="justify-content:flex-end"><button class="btn primary" id="beginSession">摆好了，开始训练</button></div></section>
+      <section id="sessionScreen" class="hidden"><div class="session-progress"><span id="sessionProgress"></span></div><div class="runtime-layout"><div class="runtime-visual"><div class="drill-visual" id="runtimePitch"><div class="pitch-lines"></div><span class="dot-player" style="left:24%;top:52%">你</span><span class="dot-ball" style="left:48%;top:50%"></span><span class="drill-arrow" style="left:35%;top:45%;width:38%;transform:rotate(-8deg)"></span></div><b id="runtimeCue">动作提示</b><p id="runtimeInstruction">抬头确认空间，动作质量优先。</p></div><div class="runtime-main"><span class="counter" id="exerciseCount">动作 1 / 4</span><h3 id="exerciseName">带球动态热身</h3><p id="exerciseTarget">连续完成 · 6 分钟</p><div class="timer runtime" id="timer">00:00</div><div class="round-status" id="roundStatus"></div><div id="measureArea"></div><button class="btn primary" id="completeSet">完成这一项</button><div class="session-utility"><button id="pauseTimer">暂停计时</button><button id="skipExercise">跳过</button><button id="shortenSession">只练到这里</button></div><div class="next-up" id="nextUp">下一项：墙传接球</div></div></div></section>
+      <section id="finishScreen" class="hidden"><span class="pill live">训练结束</span><h3 class="prep-title">这节训练，身体感觉怎么样？</h3><p class="prep-copy">留下一个主观强度和一句话，下次排计划会更准。</p><div class="rpe-grid"><button class="rpe" data-rpe="4">4<br><small>轻松</small></button><button class="rpe" data-rpe="5">5<br><small>适中</small></button><button class="rpe active" data-rpe="6">6<br><small>有效</small></button><button class="rpe" data-rpe="7">7<br><small>较累</small></button><button class="rpe" data-rpe="8">8<br><small>很累</small></button></div><div class="field"><label for="sessionNote">一句训练笔记（可选）</label><textarea id="sessionNote" placeholder="例如：左脚接球时身体还是容易关上。"></textarea></div><div class="button-row" style="justify-content:flex-end;margin-top:16px"><button class="btn primary" id="saveSession">保存到训练历史</button></div></section>
+    </div></div>
+  </div>
   <div class="modal-backdrop" id="matchModal" role="dialog" aria-modal="true" aria-label="记录比赛"><div class="modal wide"><div class="modal-head"><h2>记录一场比赛</h2><button class="close" data-close="matchModal">×</button></div><form class="modal-body" id="matchForm"><div class="form-grid"><div class="field"><label for="opponent">对手</label><input id="opponent" name="opponent" value="经管学院" required></div><div class="field"><label for="matchDate">日期</label><input id="matchDate" name="date" type="date" value="2026-09-13" required></div><div class="field"><label for="position">位置</label><select id="position" name="position"><option>CM</option><option>DM</option><option>AM</option><option>边后卫</option><option>前锋</option></select></div><div class="field"><label for="minutes">出场时间</label><input id="minutes" name="minutes" type="number" value="60" min="0"></div><div class="field"><label for="goals">进球</label><input id="goals" name="goals" type="number" value="0" min="0"></div><div class="field"><label for="assists">助攻</label><input id="assists" name="assists" type="number" value="1" min="0"></div><div class="field full"><label for="goodNote">做得好的</label><textarea id="goodNote" name="good">接球前观察更主动，转身选择更清楚。</textarea></div><div class="field full"><label for="improveNote">需要改进</label><textarea id="improveNote" name="improve">高强度下弱势脚第一脚触球不稳定。</textarea></div></div><div class="button-row" style="justify-content:flex-end;margin-top:18px"><button type="button" class="btn ghost" data-close="matchModal">取消</button><button type="submit" class="btn primary">保存比赛记录</button></div></form></div></div>
   <div class="modal-backdrop" id="drillModal" role="dialog" aria-modal="true" aria-label="动作详情"><div class="modal"><div class="modal-head"><h2 id="drillModalTitle">动作详情</h2><button class="close" data-close="drillModal">×</button></div><div class="modal-body" id="drillModalBody"></div></div></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -409,18 +501,108 @@
     document.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener('click', () => closeModal(btn.dataset.close)));
     document.querySelectorAll('.modal-backdrop').forEach(bg => bg.addEventListener('click', e => { if(e.target === bg) bg.classList.remove('open'); }));
 
-    // Training flow
-    let timerSeconds=0, timerHandle=null, timerRunning=true, completedSets=0, exerciseIndex=0;
-    const exercises=[['动态热身','连续 8 分钟 · 激活身体'],['Inside–Outside 控球','4 组 × 60 秒 · 休息 30 秒'],['双脚墙传','4 组 × 50 次 · 记录成功率'],['20m 冲刺','6 组 · 组间充分恢复']];
-    function startWorkout(){ openModal('workoutModal'); if(!timerHandle){timerRunning=true; timerHandle=setInterval(()=>{if(timerRunning){timerSeconds++; renderTimer();}},1000);} }
-    function renderTimer(){ const m=String(Math.floor(timerSeconds/60)).padStart(2,'0'),s=String(timerSeconds%60).padStart(2,'0'); document.getElementById('timer').textContent=m+':'+s; }
-    document.getElementById('startWorkout').onclick=startWorkout; document.getElementById('startWorkout2').onclick=startWorkout;
-    document.getElementById('pauseTimer').onclick=()=>{timerRunning=!timerRunning; document.getElementById('pauseTimer').textContent=timerRunning?'暂停':'继续';};
-    document.getElementById('completeSet').onclick=()=>{
-      completedSets++; const dots=document.querySelectorAll('#setDots .set-dot'); dots[Math.min(completedSets-1,dots.length-1)].classList.add('done');
-      if(completedSets>=4){ completedSets=0; exerciseIndex++; dots.forEach(x=>x.classList.remove('done')); if(exerciseIndex>=exercises.length){clearInterval(timerHandle);timerHandle=null;closeModal('workoutModal');document.getElementById('weekSessions').textContent='4 次';document.getElementById('monthMinutes').textContent='388 分';document.getElementById('trainingHistory').insertAdjacentHTML('afterbegin','<div class="history-item"><div class="history-icon">✓</div><div><strong>第一脚触球 · 进阶</strong><p>刚刚 · 62 分钟 · 4 个阶段</p></div><span class="pill">完成</span></div>');showToast('训练已完成，记录已加入历史');exerciseIndex=0;timerSeconds=0;renderTimer();return;} document.getElementById('exerciseCount').textContent='动作 '+(exerciseIndex+1)+' / 4';document.getElementById('exerciseName').textContent=exercises[exerciseIndex][0];document.getElementById('exerciseTarget').textContent=exercises[exerciseIndex][1];showToast('本动作完成，进入下一项'); } else { showToast('已完成第 '+completedSets+' 组'); }
+    // Constraint-led training: plan for the people, time, space and equipment actually present.
+    const builderState={people:'1',duration:40,space:'小空地',equipment:new Set(['足球','标志盘','墙面']),focus:'第一脚触球',readiness:'正常'};
+    let currentPlan=[], timerSeconds=0, timerHandle=null, timerRunning=false, exerciseIndex=0, currentRound=1, attempts=0, successes=0, selectedRpe=6, completedExercises=0;
+    const peopleLabel=()=>builderState.people==='1'?'单人':builderState.people==='5'?'5–8 人':builderState.people+' 人';
+    const intensityLabel=()=>builderState.readiness==='轻松'?'高强度':builderState.readiness==='有点累'?'恢复强度':'正常强度';
+    const allocateMinutes=total=>{const values=[Math.max(4,Math.round(total*.15)),Math.round(total*.28),Math.round(total*.34)];values.push(total-values.reduce((a,b)=>a+b,0));return values;};
+    const secondsLabel=seconds=>{const mins=Math.floor(seconds/60),secs=seconds%60;return mins?(secs?`${mins}分${secs}秒`:`${mins} 分钟`):`${secs} 秒`;};
+    function exercise(name,detail,type,rounds,cue,instruction,minutes){return{name,detail,type,rounds,cue,instruction,minutes};}
+    function generateTrainingPlan(silent=false){
+      const m=allocateMinutes(builderState.duration), p=builderState.people, eq=builderState.equipment, focus=builderState.focus, workSets=builderState.duration<=40?3:builderState.duration<=60?4:5;
+      const workSeconds=Math.max(45,Math.round(((m[1]*60-(workSets-1)*30)/workSets)/15)*15);
+      const rest=builderState.readiness==='有点累'?'动作降速，感觉不稳就停':'保持动作质量，组间充分恢复';
+      if(p==='1'){
+        const wall=eq.has('墙面'), goal=eq.has('小球门')||eq.has('大球门');
+        const technique=focus==='射门'&&goal?'移动后定点射门':focus==='控球'?'变向带球过门':focus==='体能'?'带球折返间歇':wall?(focus==='传球'?'双脚节奏墙传':'开放身体墙传接球'):'六码门第一脚触球';
+        const accuracy=focus==='射门'&&goal?'射门落点挑战':wall?'墙传成功率':'带球穿门挑战';
+        currentPlan=[
+          exercise('带球动态热身',`连续 ${m[0]} 分钟 · 逐步提速`,'complete',1,'先热起来，不追速度','脚下保持小触球，最后两分钟加入变向。',m[0]),
+          exercise(technique,`${workSets} 组 × ${secondsLabel(workSeconds)} · 组间 30 秒`,'timer',workSets,'接球前先看一眼','身体侧开，第一脚把球带向下一步动作。',m[1]),
+          exercise(accuracy,`3 轮 × 20 次 · 记录成功 / 失误`,'accuracy',3,'只记录合格动作',wall?'球离脚后立即调整站位，不要站着等回球。':'每次从不同角度进入标志门。',m[2]),
+          exercise(builderState.readiness==='有点累'?'低强度带球整理':'带球折返挑战',`${Math.max(3,Math.round(m[3]/2))} 局 · 每局约 90 秒`,'rounds',Math.max(3,Math.round(m[3]/2)),'最后保持技术动作',rest,m[3])
+        ];
+      }else if(p==='2'){
+        currentPlan=[
+          exercise('双人移动热身',`连续 ${m[0]} 分钟 · 带球与动态活动`,'complete',1,'两个人都一直有球','在区域两端往返，不排队等候。',m[0]),
+          exercise(focus==='射门'?'传跑后终结':'双人第一脚触球',`${workSets} 组 × ${secondsLabel(workSeconds)} · 每组互换角色`,'timer',workSets,'传完就移动','接球队员先观察，再把第一脚带出压力方向。',m[1]),
+          exercise('移动传球成功率',`3 轮 × 每人 15 次 · 合格才计数`,'accuracy',3,'距离随成功率调整','连续成功 5 次就后退一步，连续失误 2 次就靠近。',m[2]),
+          exercise(builderState.space==='小空地'?'护球出区 1v1':'带球过线 1v1',`${Math.max(3,Math.round(m[3]/2))} 局 · 每局交换攻守`,'rounds',Math.max(3,Math.round(m[3]/2)),'短局、高质量','进攻方得分或球出界就立刻换角色。',m[3])
+        ];
+      }else{
+        const n=p==='5'?'4v2':p==='4'?'3v1':'2v1';
+        currentPlan=[
+          exercise('人球动态热身',`连续 ${m[0]} 分钟 · 每人持续参与`,'complete',1,'每个人都在动','两人一球移动传接，没有固定排队点。',m[0]),
+          exercise(p==='3'?'三角传球轮转':'带方向接应传球',`${workSets} 组 × ${secondsLabel(workSeconds)} · 组间 30 秒`,'timer',workSets,'传完换位，不跟球走','接应者始终提供两个不同角度的出球点。',m[1]),
+          exercise(`${n} 连续抢圈`,`3 轮 · 丢球者立即成为防守`,'rounds',3,'转换要快','限制两脚；连续传球达到目标后缩小区域。',m[2]),
+          exercise(builderState.space==='小空地'?'四门控球赛':'小场攻防赛',`${Math.max(3,Math.round(m[3]/3))} 局 · 每局约 3 分钟`,'rounds',Math.max(3,Math.round(m[3]/3)),'把今日重点带进对抗',rest,m[3])
+        ];
+      }
+      renderPlan();
+      if(!silent){showToast('已按现场条件重排训练');if(window.innerWidth<900)document.querySelector('.plan-result').scrollIntoView({behavior:'smooth',block:'start'});}
+    }
+    function measureText(item){return item.type==='complete'?'完成即可':item.type==='timer'?'计时组':item.type==='accuracy'?'成功率':'轮次';}
+    function renderPlan(){
+      document.getElementById('planTitle').textContent=`${builderState.duration} 分钟 · ${peopleLabel()}${builderState.focus}`;
+      document.getElementById('planMeta').textContent=`${builderState.space} · ${intensityLabel()} · ${currentPlan.length} 个阶段`;
+      const soloReason=builderState.equipment.has('墙面')?'墙面能连续回球，一个人也不用频繁捡球。':'用标志门代替队友反馈，避免原地重复动作。';
+      document.getElementById('planFit').innerHTML=`<b>为什么这样排</b><span>${builderState.people==='1'?soloReason:'用短轮转保证每个人持续参与，减少排队和站着等。'}重点放在${builderState.focus}，并按“${builderState.readiness}”状态调整强度。</span>`;
+      document.getElementById('planWait').textContent=builderState.people==='1'?'独立可完成':'少排队轮转';
+      document.getElementById('setupList').innerHTML=`<div class="setup-item"><span>参与人数</span><b>${peopleLabel()}</b></div><div class="setup-item"><span>可用空间</span><b>${builderState.space}</b></div><div class="setup-item"><span>带到场边</span><b>${[...builderState.equipment].join(' · ')}</b></div>`;
+      document.getElementById('generatedPlan').innerHTML=currentPlan.map((item,i)=>`<div class="plan-item"><div class="order">${String(i+1).padStart(2,'0')}</div><div><strong>${item.name}<span class="measure-badge">${measureText(item)}</span></strong><p>${item.detail}</p></div><div class="plan-time"><b>${item.minutes} min</b>${item.cue}</div></div>`).join('');
+    }
+    document.querySelectorAll('[data-choice-group]').forEach(group=>group.querySelectorAll('.choice').forEach(btn=>btn.onclick=()=>{
+      const key=group.dataset.choiceGroup;
+      if(key==='equipment'){
+        if(btn.dataset.value==='足球'&&btn.classList.contains('active')){showToast('足球是这节训练的基础器材');return;}
+        btn.classList.toggle('active');btn.classList.contains('active')?builderState.equipment.add(btn.dataset.value):builderState.equipment.delete(btn.dataset.value);
+      }else{
+        group.querySelectorAll('.choice').forEach(x=>x.classList.toggle('active',x===btn));
+        builderState[key]=key==='duration'?Number(btn.dataset.value):btn.dataset.value;
+      }
+    }));
+    document.getElementById('generatePlan').onclick=()=>generateTrainingPlan();
+    document.getElementById('useLastPlan').onclick=()=>{
+      Object.assign(builderState,{people:'2',duration:40,space:'半场',focus:'传球',readiness:'正常'});builderState.equipment=new Set(['足球','标志盘']);
+      document.querySelectorAll('[data-choice-group]').forEach(group=>group.querySelectorAll('.choice').forEach(btn=>{const key=group.dataset.choiceGroup;btn.classList.toggle('active',key==='equipment'?builderState.equipment.has(btn.dataset.value):String(builderState[key])===btn.dataset.value);}));generateTrainingPlan(true);showToast('已恢复上次的双人传球训练');
     };
-    document.getElementById('switchMulti').onclick=()=>{ document.querySelector('#screen-training [data-panel="plan"] .card-header h2').textContent='今日 3 人训练'; document.querySelector('#screen-training [data-panel="plan"] .card-header p').textContent='46 分钟 · 足球 ×1 · 标志盘 ×6'; const names=['三角传球','一脚出球轮转','2v1 连续攻防','小球门终结']; document.querySelectorAll('.plan-item strong').forEach((x,i)=>x.textContent=names[i]); showToast('已按 3 人场景重组训练'); };
+    function renderTimer(){const m=String(Math.floor(timerSeconds/60)).padStart(2,'0'),s=String(timerSeconds%60).padStart(2,'0');document.getElementById('timer').textContent=m+':'+s;}
+    function startWorkout(){
+      clearInterval(timerHandle);timerHandle=null;timerSeconds=0;timerRunning=false;exerciseIndex=0;currentRound=1;attempts=0;successes=0;completedExercises=0;renderTimer();
+      document.getElementById('sessionModalTitle').textContent='训练准备';document.getElementById('prepScreen').classList.remove('hidden');document.getElementById('sessionScreen').classList.add('hidden');document.getElementById('finishScreen').classList.add('hidden');
+      document.getElementById('prepMeta').textContent=`${builderState.duration} 分钟 · ${peopleLabel()}训练`;
+      document.getElementById('prepChecks').innerHTML=`<div class="prep-check"><span>1</span><div><b>划出训练区</b><small>${builderState.space} · 留出安全缓冲</small></div></div><div class="prep-check"><span>2</span><div><b>摆好器材</b><small>${[...builderState.equipment].join(' · ')}</small></div></div><div class="prep-check"><span>3</span><div><b>让所有人知道第一项</b><small>${currentPlan[0].name} · ${currentPlan[0].detail}</small></div></div>`;
+      openModal('workoutModal');
+    }
+    function renderMeasureArea(){
+      const item=currentPlan[exerciseIndex], area=document.getElementById('measureArea');
+      document.getElementById('roundStatus').textContent=item.rounds>1?`第 ${currentRound} / ${item.rounds} 轮`:measureText(item);
+      if(item.type==='accuracy'){
+        area.innerHTML=`<div class="score-controls"><button class="score-button good" id="scoreSuccess"><b>${successes}</b><span>成功</span></button><button class="score-button" id="scoreMiss"><b>${attempts-successes}</b><span>失误</span></button></div>`;
+        document.getElementById('scoreSuccess').onclick=()=>{attempts++;successes++;renderMeasureArea();};document.getElementById('scoreMiss').onclick=()=>{attempts++;renderMeasureArea();};
+      }else area.innerHTML='';
+    }
+    function renderExercise(){
+      const item=currentPlan[exerciseIndex];
+      document.getElementById('exerciseCount').textContent=`动作 ${exerciseIndex+1} / ${currentPlan.length}`;document.getElementById('exerciseName').textContent=item.name;document.getElementById('exerciseTarget').textContent=item.detail;document.getElementById('runtimeCue').textContent=item.cue;document.getElementById('runtimeInstruction').textContent=item.instruction;document.getElementById('sessionProgress').style.width=((exerciseIndex/currentPlan.length)*100)+'%';
+      document.getElementById('completeSet').textContent=item.type==='complete'?'热身完成，进入下一项':item.type==='accuracy'?'结束本轮':item.type==='rounds'?'完成本局':'完成本组';
+      document.getElementById('nextUp').textContent=exerciseIndex<currentPlan.length-1?'下一项：'+currentPlan[exerciseIndex+1].name:'这是今天最后一项';renderMeasureArea();
+    }
+    document.getElementById('beginSession').onclick=()=>{
+      document.getElementById('sessionModalTitle').textContent='训练进行中';document.getElementById('prepScreen').classList.add('hidden');document.getElementById('sessionScreen').classList.remove('hidden');timerRunning=true;renderExercise();timerHandle=setInterval(()=>{if(timerRunning){timerSeconds++;renderTimer();}},1000);
+    };
+    function nextExercise(){completedExercises++;exerciseIndex++;currentRound=1;attempts=0;successes=0;if(exerciseIndex>=currentPlan.length){finishSession();return;}renderExercise();showToast('进入下一项：'+currentPlan[exerciseIndex].name);}
+    document.getElementById('completeSet').onclick=()=>{const item=currentPlan[exerciseIndex];if(item.rounds>1&&currentRound<item.rounds){currentRound++;renderMeasureArea();showToast(`第 ${currentRound-1} 轮完成`);}else nextExercise();};
+    document.getElementById('pauseTimer').onclick=()=>{timerRunning=!timerRunning;document.getElementById('pauseTimer').textContent=timerRunning?'暂停计时':'继续计时';};
+    document.getElementById('skipExercise').onclick=()=>{exerciseIndex++;currentRound=1;attempts=0;successes=0;if(exerciseIndex>=currentPlan.length)finishSession();else{renderExercise();showToast('已跳过，进入下一项');}};
+    document.getElementById('shortenSession').onclick=()=>finishSession();
+    function finishSession(){timerRunning=false;clearInterval(timerHandle);timerHandle=null;document.getElementById('sessionModalTitle').textContent='训练小结';document.getElementById('sessionScreen').classList.add('hidden');document.getElementById('finishScreen').classList.remove('hidden');}
+    document.querySelectorAll('.rpe').forEach(btn=>btn.onclick=()=>{selectedRpe=Number(btn.dataset.rpe);document.querySelectorAll('.rpe').forEach(x=>x.classList.toggle('active',x===btn));});
+    document.getElementById('saveSession').onclick=()=>{const actual=Math.max(1,Math.ceil(timerSeconds/60)),title=`${peopleLabel()}${builderState.focus}`;document.getElementById('weekSessions').textContent='4 次';document.getElementById('monthMinutes').textContent=(326+actual)+' 分';document.getElementById('trainingHistory').insertAdjacentHTML('afterbegin',`<div class="history-item"><div class="history-icon">✓</div><div><strong>${title}</strong><p>刚刚 · ${actual} 分钟 · 完成 ${completedExercises}/${currentPlan.length} 个动作</p></div><span class="pill">RPE ${selectedRpe}</span></div>`);closeModal('workoutModal');showToast('训练已保存；完成度和体感已写入历史');};
+    document.querySelector('[data-close="workoutModal"]').addEventListener('click',()=>{timerRunning=false;clearInterval(timerHandle);timerHandle=null;});
+    document.getElementById('startWorkout').onclick=()=>{navigate('training');startWorkout();};document.getElementById('startWorkout2').onclick=startWorkout;
+    generateTrainingPlan(true);
 
     // Drill library rendered with the same pitch primitives used by tactics.
     const drills=[
@@ -441,7 +623,7 @@
     function renderDrills(filter='all'){ const list=drills.filter(d=>filter==='all'||d.p===filter); document.getElementById('drillLibrary').innerHTML=list.map((d,i)=>`<button class="drill-card" data-drill="${d.n}" style="text-align:left;color:inherit">${visual(i)}<h3>${d.n}</h3><p>${d.p==='1'?'单人':d.p==='2'?'2 人':d.p==='3'?'3–4 人':'5–8 人'} · ${d.time} · ${d.goal}</p></button>`).join(''); document.getElementById('filterSummary').textContent=(filter==='all'?'全部人数':({1:'单人',2:'2 人',3:'3–4 人',5:'5–8 人'}[filter]))+' · 全部时长 · '+list.length+' 个动作'; document.querySelectorAll('[data-drill]').forEach(card=>card.onclick=()=>{const d=drills.find(x=>x.n===card.dataset.drill);document.getElementById('drillModalTitle').textContent=d.n;document.getElementById('drillModalBody').innerHTML=visual(2)+`<div class="profile-lines" style="margin-top:14px"><div class="profile-line"><span>人数</span><b>${d.p==='1'?'单人':d.p==='2'?'2 人':d.p==='3'?'3–4 人':'5–8 人'}</b></div><div class="profile-line"><span>建议时长</span><b>${d.time}</b></div><div class="profile-line"><span>训练目标</span><b>${d.goal}</b></div><div class="profile-line"><span>器材</span><b>${d.setup}</b></div></div><button class="btn primary" style="width:100%;margin-top:16px" onclick="closeModal('drillModal');showToast('动作已加入今日计划')">加入训练计划</button>`;openModal('drillModal');}); }
     renderDrills();
     document.querySelectorAll('#peopleFilters .filter-btn').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('#peopleFilters .filter-btn').forEach(x=>x.classList.toggle('active',x===btn));renderDrills(btn.dataset.filter);});
-    document.getElementById('autoPlan').onclick=()=>{document.querySelector('[data-tab="plan"]').click();showToast('已组合一节 46 分钟训练');};
+    document.getElementById('autoPlan').onclick=()=>{document.querySelector('[data-tab="plan"]').click();generateTrainingPlan();};
 
     // Match record
     document.getElementById('recordMatch').onclick=()=>openModal('matchModal');
@@ -479,10 +661,10 @@
       });
       register({
         name:'start_personal_training', title:'开始个人训练',
-        description:'打开今日训练并启动可见的训练计时器。',
+        description:'打开按现场条件生成的训练，并先显示摆场准备清单。',
         inputSchema:{type:'object',properties:{},additionalProperties:false},
         annotations:{readOnlyHint:false,untrustedContentHint:false},
-        execute(){navigate('training');startWorkout();return {workout:'第一脚触球 · 进阶',status:'started',exercises:4};}
+        execute(){navigate('training');startWorkout();return {workout:`${peopleLabel()}${builderState.focus}`,status:'ready',exercises:currentPlan.length};}
       });
       register({
         name:'configure_tactics_board', title:'设置战术板',
