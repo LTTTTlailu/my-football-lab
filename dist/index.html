@@ -253,6 +253,33 @@
     .profile-ball { width:92px; height:92px; margin:4px auto 14px; border-radius:50%; display:grid; place-items:center; background:var(--lime); color:#0b160e; font-size:2rem; border:8px solid rgba(183,255,82,.12); outline:1px solid var(--lime); }
     .profile-card h2 { margin:0; font-size:1.2rem; }
     .profile-card p { margin:4px 0 18px; color:var(--muted); font-size:.78rem; }
+    .profile-main { display:grid; gap:20px; }
+    .club-empty { min-height:210px; display:grid; place-items:center; text-align:center; padding:28px; border:1px dashed #365248; border-radius:16px; background:linear-gradient(145deg,rgba(104,168,255,.08),transparent 55%); }
+    .club-empty-icon { width:58px; height:58px; display:grid; place-items:center; margin:0 auto 12px; border-radius:18px; background:var(--panel-2); color:var(--blue); font-size:1.45rem; }
+    .club-empty h3 { margin:0; font-size:1rem; }
+    .club-empty p { max-width:430px; margin:6px auto 16px; color:var(--muted); font-size:.86rem; }
+    .club-configured { display:grid; grid-template-columns:auto 1fr auto; gap:16px; align-items:center; padding:16px; border:1px solid var(--line); border-radius:16px; background:linear-gradient(135deg,rgba(183,255,82,.07),var(--panel-2)); }
+    .club-mark { width:66px; height:66px; display:grid; place-items:center; border-radius:20px; background:var(--lime); color:#0b160e; font-size:1.25rem; font-weight:950; }
+    .club-copy h3 { margin:0; font-size:1.05rem; }
+    .club-copy p { margin:4px 0 0; color:var(--muted); font-size:.8rem; }
+    .reminder-row { display:grid; grid-template-columns:1fr auto; gap:14px; align-items:center; margin-top:12px; padding:13px 14px; border:1px solid var(--line); border-radius:14px; }
+    .reminder-row b { display:block; font-size:.88rem; }
+    .reminder-row small { color:var(--muted); font-size:.78rem; }
+    .switch { min-width:78px; border:1px solid var(--line); background:var(--panel-2); color:var(--muted); padding:8px 11px; border-radius:999px; cursor:pointer; font-size:.86rem; }
+    .switch.on { border-color:var(--lime); background:rgba(183,255,82,.1); color:var(--lime); }
+    .reminder-options { display:flex; align-items:center; justify-content:flex-end; gap:8px; margin-top:10px; }
+    .reminder-options label { color:var(--muted); font-size:.78rem; }
+    .reminder-options select { width:auto; min-width:130px; padding:7px 28px 7px 9px; }
+    .photo-wall { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+    .photo-empty { grid-column:1/-1; min-height:170px; display:grid; place-items:center; text-align:center; padding:25px; border:1px dashed #365248; border-radius:15px; color:var(--muted); }
+    .photo-empty b { display:block; color:var(--ink); font-size:.86rem; margin-bottom:4px; }
+    .photo-tile { position:relative; aspect-ratio:4/3; border-radius:14px; overflow:hidden; background:var(--panel-2); }
+    .photo-tile img { width:100%; height:100%; object-fit:cover; display:block; }
+    .photo-remove { position:absolute; top:8px; right:8px; width:30px; height:30px; border:0; border-radius:50%; background:rgba(5,12,10,.76); color:white; cursor:pointer; }
+    .team-options { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin:14px 0; }
+    .team-option { display:flex; align-items:center; gap:10px; padding:10px; border:1px solid var(--line); border-radius:12px; background:var(--panel-2); cursor:pointer; text-align:left; }
+    .team-option span { width:30px; height:30px; display:grid; place-items:center; border-radius:9px; background:#27483c; color:var(--lime); font-size:.68rem; font-weight:900; }
+    .team-option.active { border-color:var(--lime); color:var(--lime); }
     .profile-lines { text-align:left; display:grid; gap:0; }
     .profile-line { display:flex; justify-content:space-between; padding:11px 0; border-top:1px solid var(--line); font-size:.78rem; }
     .profile-line span { color:var(--muted); }
@@ -335,6 +362,8 @@
       #screen-training .tabs { width:100%; }
       #screen-training .tab { flex:1; }
       .grid-home, .training-grid, .training-builder, .matches-grid, .profile-grid { grid-template-columns:1fr; }
+      .club-configured { grid-template-columns:auto 1fr; }
+      .club-configured > .btn { grid-column:1/-1; width:100%; }
       .builder-card { position:static; }
       .mobile-nav { display:grid; grid-template-columns:repeat(5,1fr); position:fixed; left:10px; right:10px; bottom:10px; z-index:40; padding:6px; border:1px solid var(--line); border-radius:18px; background:rgba(11,22,19,.94); backdrop-filter:blur(18px); box-shadow:var(--shadow); }
       .mobile-nav .nav-btn { display:grid; justify-items:center; gap:1px; padding:7px 2px; font-size:.62rem; border-radius:12px; box-shadow:none; }
@@ -360,6 +389,8 @@
       .frame-list { grid-template-columns:1fr; }
       .form-grid { grid-template-columns:1fr; }
       .setup-list { grid-template-columns:1fr 1fr; }
+      .photo-wall { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .team-options { grid-template-columns:1fr; }
       .runtime-layout { grid-template-columns:1fr; }
       .runtime-visual { min-height:auto; }
       .runtime-visual .drill-visual { height:145px; }
@@ -460,7 +491,19 @@
         <div class="card architecture"><div class="engine-block"><b>训练动作</b><small>人数、器材、站位、示范动画</small></div><div class="engine-core">统一<br>Pitch Engine</div><div class="engine-block"><b>比赛战术</b><small>阵型、路线、区域、关键帧</small></div></div>
       </section>
 
-      <section class="screen" id="screen-profile"><div class="profile-grid"><article class="card profile-card"><div class="card-body"><div class="profile-ball">7</div><h2>中场 · 足球爱好者</h2><p>右脚 · 主要位置 CM / DM</p><div class="profile-lines"><div class="profile-line"><span>累计训练</span><b>21 小时 36 分</b></div><div class="profile-line"><span>比赛</span><b>6 场</b></div><div class="profile-line"><span>本季目标</span><b>弱势脚 + 体能</b></div><div class="profile-line"><span>常用赛制</span><b>7v7</b></div></div></div></article><article class="card"><div class="card-body"><div class="card-header"><div><h2>能力自评</h2><p>结合训练完成度与赛后评分</p></div><span class="pill">9 月</span></div><div class="radar-placeholder"><div class="radar"><div class="radar-ring r1"></div><div class="radar-ring r2"></div><div class="radar-ring r3"></div><div class="radar-shape"></div><span class="radar-label top">传球 78</span><span class="radar-label right">体能 68</span><span class="radar-label br">防守 72</span><span class="radar-label bl">射门 61</span><span class="radar-label left">控球 80</span></div></div></div></article></div></section>
+      <section class="screen" id="screen-profile">
+        <div class="profile-grid">
+          <article class="card profile-card"><div class="card-body"><div class="profile-ball">7</div><h2>中场 · 足球爱好者</h2><p>右脚 · 主要位置 CM / DM</p><div class="profile-lines"><div class="profile-line"><span>累计训练</span><b>21 小时 36 分</b></div><div class="profile-line"><span>比赛</span><b>6 场</b></div><div class="profile-line"><span>本季目标</span><b>弱势脚 + 体能</b></div><div class="profile-line"><span>常用赛制</span><b>7v7</b></div></div></div></article>
+          <div class="profile-main">
+            <article class="card"><div class="card-body"><div class="card-header"><div><h2>我的主队</h2><p>选定后集中查看赛程，并设置观赛提醒</p></div><span class="pill">支持更换</span></div>
+              <div class="club-empty" id="clubEmpty"><div><div class="club-empty-icon">旗</div><h3>还没有设置主队</h3><p>先选一支最关注的球队。真实赛程数据接入后，这里会自动显示下一场比赛。</p><button class="btn primary" id="chooseClub">选择我的主队</button></div></div>
+              <div class="hidden" id="clubConfigured"><div class="club-configured"><div class="club-mark" id="clubMark">队</div><div class="club-copy"><h3 id="clubName">我的主队</h3><p id="clubNextMatch">下一场比赛 · 等待赛程数据接入</p></div><button class="btn ghost small" id="changeClub">更换主队</button></div><div class="reminder-row"><div><b>观赛提醒</b><small>提醒设置先保存，接入真实赛程后生效</small></div><button class="switch" id="reminderToggle" role="switch" aria-checked="false">未开启</button></div><div class="reminder-options"><label for="reminderLead">提前多久</label><select id="reminderLead" disabled><option value="15">赛前 15 分钟</option><option value="30" selected>赛前 30 分钟</option><option value="60">赛前 1 小时</option><option value="1440">赛前 1 天</option></select></div></div>
+            </div></article>
+            <article class="card"><div class="card-body"><div class="card-header"><div><h2>能力自评</h2><p>结合训练完成度与赛后评分</p></div><span class="pill">9 月</span></div><div class="radar-placeholder"><div class="radar"><div class="radar-ring r1"></div><div class="radar-ring r2"></div><div class="radar-ring r3"></div><div class="radar-shape"></div><span class="radar-label top">传球 78</span><span class="radar-label right">体能 68</span><span class="radar-label br">防守 72</span><span class="radar-label bl">射门 61</span><span class="radar-label left">控球 80</span></div></div></div></article>
+            <article class="card"><div class="card-body"><div class="card-header"><div><h2>我的足球照片墙</h2><p>训练、比赛和看球留下的瞬间</p></div><button class="btn primary small" id="addPhotos">＋ 添加照片</button></div><input id="photoInput" type="file" accept="image/*" multiple hidden><div class="photo-wall" id="photoWall"><div class="photo-empty"><div><b>从第一张足球照片开始</b><span>照片只在当前页面预览，不会上传到外部。</span></div></div></div></div></article>
+          </div>
+        </div>
+      </section>
     </main>
   </div>
 
@@ -477,11 +520,12 @@
   </div>
   <div class="modal-backdrop" id="matchModal" role="dialog" aria-modal="true" aria-label="记录比赛"><div class="modal wide"><div class="modal-head"><h2>记录一场比赛</h2><button class="close" data-close="matchModal">×</button></div><form class="modal-body" id="matchForm"><div class="form-grid"><div class="field"><label for="opponent">对手</label><input id="opponent" name="opponent" value="经管学院" required></div><div class="field"><label for="matchDate">日期</label><input id="matchDate" name="date" type="date" value="2026-09-13" required></div><div class="field"><label for="position">位置</label><select id="position" name="position"><option>CM</option><option>DM</option><option>AM</option><option>边后卫</option><option>前锋</option></select></div><div class="field"><label for="minutes">出场时间</label><input id="minutes" name="minutes" type="number" value="60" min="0"></div><div class="field"><label for="goals">进球</label><input id="goals" name="goals" type="number" value="0" min="0"></div><div class="field"><label for="assists">助攻</label><input id="assists" name="assists" type="number" value="1" min="0"></div><div class="field full"><label for="goodNote">做得好的</label><textarea id="goodNote" name="good">接球前观察更主动，转身选择更清楚。</textarea></div><div class="field full"><label for="improveNote">需要改进</label><textarea id="improveNote" name="improve">高强度下弱势脚第一脚触球不稳定。</textarea></div></div><div class="button-row" style="justify-content:flex-end;margin-top:18px"><button type="button" class="btn ghost" data-close="matchModal">取消</button><button type="submit" class="btn primary">保存比赛记录</button></div></form></div></div>
   <div class="modal-backdrop" id="drillModal" role="dialog" aria-modal="true" aria-label="动作详情"><div class="modal"><div class="modal-head"><h2 id="drillModalTitle">动作详情</h2><button class="close" data-close="drillModal">×</button></div><div class="modal-body" id="drillModalBody"></div></div></div>
+  <div class="modal-backdrop" id="clubModal" role="dialog" aria-modal="true" aria-label="选择我的主队"><div class="modal"><div class="modal-head"><h2>选择我的主队</h2><button class="close" data-close="clubModal">×</button></div><div class="modal-body"><p class="prep-copy">先选最常关注的一支。这里只保存偏好，不会代表你关注或订阅球队账号。</p><div class="team-options" id="teamOptions"><button class="team-option" data-team="皇家马德里"><span>RMA</span>皇家马德里</button><button class="team-option" data-team="巴塞罗那"><span>BAR</span>巴塞罗那</button><button class="team-option" data-team="阿森纳"><span>ARS</span>阿森纳</button><button class="team-option" data-team="利物浦"><span>LIV</span>利物浦</button><button class="team-option" data-team="曼城"><span>MCI</span>曼城</button><button class="team-option" data-team="拜仁慕尼黑"><span>FCB</span>拜仁慕尼黑</button><button class="team-option" data-team="国际米兰"><span>INT</span>国际米兰</button><button class="team-option" data-team="AC 米兰"><span>ACM</span>AC 米兰</button></div><div class="field"><label for="customTeam">没有找到？直接填写球队名称</label><input id="customTeam" placeholder="例如：北京国安"></div><div class="button-row" style="justify-content:flex-end;margin-top:16px"><button class="btn primary" id="saveClub">确认主队</button></div></div></div></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
     const pageMeta = {
-      home: ['9 月 13 日 · 周日', '晚上好，今天练什么？'], training: ['TRAINING', '像健身一样执行足球训练'], matches: ['MATCHDAY', '每场比赛都留下成长线索'], tactics: ['TACTICS LAB', '把脑中的战术放到球场上'], profile: ['MY GAME', '你的个人足球履历']
+      home: ['9 月 13 日 · 周日', '晚上好，今天练什么？'], training: ['TRAINING', '像健身一样执行足球训练'], matches: ['MATCHDAY', '每场比赛都留下成长线索'], tactics: ['TACTICS LAB', '把脑中的战术放到球场上'], profile: ['MY GAME', '球员档案、主队与足球记忆']
     };
     document.querySelectorAll('[data-screen]').forEach(btn => btn.addEventListener('click', () => navigate(btn.dataset.screen)));
     function navigate(screen) {
@@ -628,6 +672,29 @@
     // Match record
     document.getElementById('recordMatch').onclick=()=>openModal('matchModal');
     document.getElementById('matchForm').onsubmit=(e)=>{e.preventDefault();const f=new FormData(e.target);const goals=Number(f.get('goals')),assists=Number(f.get('assists'));document.getElementById('matchCount').textContent='7';document.getElementById('goalCount').textContent=String(3+goals);document.getElementById('assistCount').textContent=String(4+assists);document.getElementById('scheduleList').insertAdjacentHTML('afterbegin',`<div class="schedule"><div class="schedule-date"><b>13</b><small>9 月</small></div><div><strong>vs ${f.get('opponent')}</strong><p>${f.get('position')} · ${f.get('minutes')} 分钟 · ${goals} 球 ${assists} 助</p></div><span class="pill live">已记录</span></div>`);closeModal('matchModal');showToast('比赛已保存，改进项可转入训练计划');};
+
+    // Personal team preference, viewing reminder prototype and device-local photo wall.
+    const clubMarks={'皇家马德里':'RMA','巴塞罗那':'BAR','阿森纳':'ARS','利物浦':'LIV','曼城':'MCI','拜仁慕尼黑':'FCB','国际米兰':'INT','AC 米兰':'ACM'};
+    let selectedTeamCandidate='', photoUrls=[];
+    let profilePrefs={club:'',reminder:false,lead:'30'};
+    try{profilePrefs={...profilePrefs,...JSON.parse(localStorage.getItem('footballLabProfile')||'{}')};}catch(_){}
+    function saveProfilePrefs(){try{localStorage.setItem('footballLabProfile',JSON.stringify(profilePrefs));}catch(_){}}
+    function renderReminder(){const button=document.getElementById('reminderToggle'),lead=document.getElementById('reminderLead');button.classList.toggle('on',profilePrefs.reminder);button.textContent=profilePrefs.reminder?'已开启':'未开启';button.setAttribute('aria-checked',String(profilePrefs.reminder));lead.disabled=!profilePrefs.reminder;lead.value=profilePrefs.lead;}
+    function renderClub(){
+      const hasClub=Boolean(profilePrefs.club);document.getElementById('clubEmpty').classList.toggle('hidden',hasClub);document.getElementById('clubConfigured').classList.toggle('hidden',!hasClub);if(!hasClub)return;
+      document.getElementById('clubName').textContent=profilePrefs.club;document.getElementById('clubMark').textContent=clubMarks[profilePrefs.club]||profilePrefs.club.slice(0,2);document.getElementById('clubNextMatch').textContent='下一场比赛 · 等待赛程数据接入';renderReminder();
+    }
+    function openClubPicker(){selectedTeamCandidate=profilePrefs.club;document.getElementById('customTeam').value=clubMarks[profilePrefs.club]?'':profilePrefs.club;document.querySelectorAll('.team-option').forEach(btn=>btn.classList.toggle('active',btn.dataset.team===selectedTeamCandidate));openModal('clubModal');}
+    document.getElementById('chooseClub').onclick=openClubPicker;document.getElementById('changeClub').onclick=openClubPicker;
+    document.querySelectorAll('.team-option').forEach(btn=>btn.onclick=()=>{selectedTeamCandidate=btn.dataset.team;document.getElementById('customTeam').value='';document.querySelectorAll('.team-option').forEach(x=>x.classList.toggle('active',x===btn));});
+    document.getElementById('customTeam').addEventListener('input',e=>{if(e.target.value.trim()){selectedTeamCandidate='';document.querySelectorAll('.team-option').forEach(x=>x.classList.remove('active'));}});
+    document.getElementById('saveClub').onclick=()=>{const custom=document.getElementById('customTeam').value.trim(),club=custom||selectedTeamCandidate;if(!club){showToast('请先选择或填写一支球队');return;}profilePrefs.club=club;saveProfilePrefs();renderClub();closeModal('clubModal');showToast('主队已保存，可以继续设置观赛提醒');};
+    document.getElementById('reminderToggle').onclick=()=>{profilePrefs.reminder=!profilePrefs.reminder;saveProfilePrefs();renderReminder();showToast(profilePrefs.reminder?'观赛提醒已开启（当前为原型）':'观赛提醒已关闭');};
+    document.getElementById('reminderLead').onchange=e=>{profilePrefs.lead=e.target.value;saveProfilePrefs();showToast('提醒时间已保存');};
+    function renderPhotoWall(){const wall=document.getElementById('photoWall');if(!photoUrls.length){wall.innerHTML='<div class="photo-empty"><div><b>从第一张足球照片开始</b><span>照片只在当前页面预览，不会上传到外部。</span></div></div>';return;}wall.innerHTML=photoUrls.map((url,i)=>`<div class="photo-tile"><img src="${url}" alt="足球照片 ${i+1}"><button class="photo-remove" data-remove-photo="${i}" aria-label="移除第 ${i+1} 张照片">×</button></div>`).join('');document.querySelectorAll('[data-remove-photo]').forEach(btn=>btn.onclick=()=>{const index=Number(btn.dataset.removePhoto);URL.revokeObjectURL(photoUrls[index]);photoUrls.splice(index,1);renderPhotoWall();showToast('照片已从照片墙移除');});}
+    document.getElementById('addPhotos').onclick=()=>document.getElementById('photoInput').click();
+    document.getElementById('photoInput').onchange=e=>{const remaining=6-photoUrls.length,files=[...e.target.files].filter(file=>file.type.startsWith('image/')).slice(0,remaining);photoUrls.push(...files.map(file=>URL.createObjectURL(file)));renderPhotoWall();e.target.value='';showToast(files.length?`已加入 ${files.length} 张照片`:'最多可预览 6 张照片');};
+    renderClub();
 
     // Unified tactical pitch engine
     const pitch=document.getElementById('tacticPitch'); let teamSize=7, activeTool='select', drawStart=null, dragTarget=null, frames=[], activeFrame=0;
