@@ -386,14 +386,6 @@
     .club-mark { width:66px; height:66px; display:grid; place-items:center; border-radius:20px; background:var(--lime); color:#0b160e; font-size:1.25rem; font-weight:950; }
     .club-copy h3 { margin:0; font-size:1.05rem; }
     .club-copy p { margin:4px 0 0; color:var(--muted); font-size:.8rem; }
-    .reminder-row { display:grid; grid-template-columns:1fr auto; gap:14px; align-items:center; margin-top:12px; padding:13px 14px; border:1px solid var(--line); border-radius:14px; }
-    .reminder-row b { display:block; font-size:.88rem; }
-    .reminder-row small { color:var(--muted); font-size:.78rem; }
-    .switch { min-width:78px; border:1px solid var(--line); background:var(--panel-2); color:var(--muted); padding:8px 11px; border-radius:999px; cursor:pointer; font-size:.86rem; }
-    .switch.on { border-color:var(--lime); background:rgba(183,255,82,.1); color:var(--lime); }
-    .reminder-options { display:flex; align-items:center; justify-content:flex-end; gap:8px; margin-top:10px; }
-    .reminder-options label { color:var(--muted); font-size:.78rem; }
-    .reminder-options select { width:auto; min-width:130px; padding:7px 28px 7px 9px; }
     .watch-list { display:grid; gap:9px; margin-top:12px; }
     .watch-empty { padding:18px; border:1px dashed #365248; border-radius:14px; color:var(--muted); font-size:.82rem; text-align:center; }
     .watch-team { display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:11px; align-items:center; padding:11px; border:1px solid var(--line); border-radius:14px; background:var(--panel-2); }
@@ -403,7 +395,6 @@
     .watch-team-copy b { display:block; font-size:.86rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .watch-team-copy small { display:block; margin-top:3px; color:var(--muted); font-size:.75rem; line-height:1.35; }
     .watch-team-actions { display:flex; align-items:center; gap:6px; }
-    .watch-team-actions .switch { min-width:64px; padding:7px 9px; font-size:.75rem; }
     .watch-remove { width:30px; height:30px; border:1px solid var(--line); border-radius:9px; background:transparent; color:var(--muted); cursor:pointer; }
     .followed-section { margin-top:18px; padding-top:16px; border-top:1px solid var(--line); }
     .followed-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
@@ -602,7 +593,7 @@
         <div><p class="eyebrow" id="pageEyebrow">今天</p><h1 id="pageTitle">足球爱好者，无论今天怎么样，来吧！</h1></div>
         <div class="top-actions"><div class="avatar" aria-label="用户头像">7</div></div>
       </header>
-      <p class="release-notice" id="siteNotice"><strong>网站通知</strong>：当前为公开内测版。个人档案、训练、比赛、阵容和照片仅保存在当前浏览器；清除浏览器数据或更换设备后无法恢复。观赛提醒暂不发送系统推送。</p>
+      <p class="release-notice" id="siteNotice"><strong>网站通知</strong>：当前为公开内测版。个人档案、训练、比赛、阵容和照片仅保存在当前浏览器；清除浏览器数据或更换设备后无法恢复。打开网站后会自动更新主队和关注球队的下一场比赛。</p>
 
       <section class="screen active" id="screen-home">
         <div class="home-flow" id="homeFlow">
@@ -612,7 +603,7 @@
             <div class="button-row"><button class="btn primary" id="startWorkout">▶ 开始训练</button><button class="btn ghost" id="viewTodayPlan">查看计划</button></div>
           </div></article>
           <article class="card home-module next-match" id="homeNextMatch" data-match-date="2026-09-20"><div class="card-body"><div class="card-header"><div><span class="pill urgent-label" id="homeNextUrgency">下一场比赛</span><h2 style="margin-top:10px">下一场比赛</h2><p id="homeNextDate">9 月 20 日 · 20:00</p></div><span class="pill" id="homeNextFormat">7v7</span></div><div class="scoreboard" style="margin:12px 0 20px"><div class="team"><div class="team-badge">法</div><strong>法学院</strong></div><div class="score" style="font-size:1rem;color:var(--muted)">VS</div><div class="team"><div class="team-badge" style="background:rgba(255,107,80,.12)" id="homeNextOpponentMark">经</div><strong id="homeNextOpponent">经管学院</strong></div></div><p class="data-source-note" id="homeNextVenue">东区 2 号场</p><button class="btn ghost" style="width:100%;margin-top:10px" data-screen="matches">查看比赛准备</button></div></article>
-          <article class="card home-module reminder" id="homeReminderCard"><div class="card-body"><div class="card-header"><div><span class="pill urgent-label" id="homeReminderUrgency">观赛提醒</span><h2 style="margin-top:10px">观赛提醒</h2><p id="homeReminderSummary">主队默认开启提醒</p></div><button class="btn primary small" id="homeAddFollowedTeam">＋ 关注球队</button></div><div class="watch-list" id="homeReminderList"><div class="watch-empty">设置主队后，下一场比赛会显示在这里。</div></div><p class="data-source-note">Football data provided by the <a href="https://www.football-data.org/" target="_blank" rel="noreferrer">Football-Data.org API</a></p></div></article>
+          <article class="card home-module reminder" id="homeReminderCard"><div class="card-body"><div class="card-header"><div><span class="pill urgent-label" id="homeReminderUrgency">关注球队赛程</span><h2 style="margin-top:10px">关注球队赛程</h2><p id="homeReminderSummary">打开网站后自动更新下一场比赛</p></div><button class="btn primary small" id="homeAddFollowedTeam">＋ 关注球队</button></div><div class="watch-list" id="homeReminderList"><div class="watch-empty">设置主队或关注球队后，下一场比赛会显示在这里。</div></div><p class="data-source-note">Football data provided by the <a href="https://www.football-data.org/" target="_blank" rel="noreferrer">Football-Data.org API</a></p></div></article>
           <article class="card home-insights home-module" id="homeHistoryStats"><div class="card-body">
           <div class="home-insights-head"><div><h2>历史与统计</h2><p>回看每天的足球记录，查看不同周期的累计表现。</p></div><div class="tabs" role="tablist" aria-label="历史与统计"><button class="tab active" data-home-insight="history" aria-selected="true">历史</button><button class="tab" data-home-insight="stats" aria-selected="false">统计</button></div></div>
           <div class="home-insight-panel active" data-home-panel="history">
@@ -698,10 +689,10 @@
         <div class="profile-grid">
           <article class="card profile-card"><div class="card-body"><div class="profile-ball" id="profileJersey">7</div><h2 id="profileHeadline">中场 · 足球爱好者</h2><p id="profileSubline">右脚 · 主要位置 CM / DM</p><div class="profile-lines"><div class="profile-line"><span>累计训练</span><b>21 小时 36 分</b></div><div class="profile-line"><span>比赛</span><b>6 场</b></div><div class="profile-line"><span>本季目标</span><b id="profileGoal">弱势脚 + 体能</b></div><div class="profile-line"><span>常用赛制</span><b id="profileFormat">7v7</b></div></div><button class="btn ghost" style="width:100%;margin-top:14px" id="editPlayerProfile">编辑球员档案</button></div></article>
           <div class="profile-main">
-            <article class="card"><div class="card-body"><div class="card-header"><div><h2>我的主队</h2><p>选定后集中查看赛程，并设置观赛提醒</p></div><span class="pill">支持更换</span></div>
+            <article class="card"><div class="card-body"><div class="card-header"><div><h2>我的主队</h2><p>选定后，首页会自动显示下一场比赛</p></div><span class="pill">支持更换</span></div>
               <div class="club-empty" id="clubEmpty"><div><div class="club-empty-icon">旗</div><h3>还没有设置主队</h3><p>先选一支最关注的球队。真实赛程数据接入后，这里会自动显示下一场比赛。</p><button class="btn primary" id="chooseClub">选择我的主队</button></div></div>
-              <div class="hidden" id="clubConfigured"><div class="club-configured"><div class="club-mark" id="clubMark">队</div><div class="club-copy"><h3 id="clubName">我的主队</h3><p id="clubNextMatch">下一场比赛 · 等待赛程数据接入</p></div><button class="btn ghost small" id="changeClub">更换主队</button></div><div class="reminder-row"><div><b>主队观赛提醒</b><small>设置主队后默认开启，可随时关闭</small></div><button class="switch" id="reminderToggle" role="switch" aria-checked="false">未开启</button></div><div class="reminder-options"><label for="reminderLead">提前多久</label><select id="reminderLead" disabled><option value="15">赛前 15 分钟</option><option value="30" selected>赛前 30 分钟</option><option value="60">赛前 1 小时</option><option value="1440">赛前 1 天</option></select></div></div>
-              <div class="followed-section"><div class="followed-head"><div><h3>关注球队</h3><p>可添加多支球队，并分别开关提醒</p></div><button class="btn ghost small" id="addFollowedTeam">＋ 添加球队</button></div><div class="watch-list" id="profileFollowedTeams"><div class="watch-empty">还没有关注其他球队。</div></div><p class="data-source-note">Football data provided by the <a href="https://www.football-data.org/" target="_blank" rel="noreferrer">Football-Data.org API</a></p></div>
+              <div class="hidden" id="clubConfigured"><div class="club-configured"><div class="club-mark" id="clubMark">队</div><div class="club-copy"><h3 id="clubName">我的主队</h3><p id="clubNextMatch">下一场比赛 · 等待赛程数据接入</p></div><button class="btn ghost small" id="changeClub">更换主队</button></div></div>
+              <div class="followed-section"><div class="followed-head"><div><h3>关注球队</h3><p>可添加多支球队，首页会自动显示各队下一场比赛</p></div><button class="btn ghost small" id="addFollowedTeam">＋ 添加球队</button></div><div class="watch-list" id="profileFollowedTeams"><div class="watch-empty">还没有关注其他球队。</div></div><p class="data-source-note">Football data provided by the <a href="https://www.football-data.org/" target="_blank" rel="noreferrer">Football-Data.org API</a></p></div>
             </div></article>
             <article class="card"><div class="card-body"><div class="card-header"><div><h2>能力自评</h2><p>结合训练完成度与赛后评分</p></div><span class="pill">9 月</span></div><div class="radar-placeholder"><div class="radar"><div class="radar-ring r1"></div><div class="radar-ring r2"></div><div class="radar-ring r3"></div><div class="radar-shape"></div><span class="radar-label top">传球 78</span><span class="radar-label right">体能 68</span><span class="radar-label br">防守 72</span><span class="radar-label bl">射门 61</span><span class="radar-label left">控球 80</span></div></div></div></article>
             <article class="card"><div class="card-body"><div class="card-header"><div><h2>我的足球照片墙</h2><p>每张照片都可以记录日期和当时的故事</p></div><button class="btn primary small" id="addPhotos">＋ 添加照片</button></div><input id="photoInput" type="file" accept="image/*" hidden><div class="photo-wall" id="photoWall"><div class="photo-empty"><div><b>从第一张足球照片开始</b><span>选择照片后，再填写拍摄日期和备注。</span></div></div></div></div></article>
@@ -755,7 +746,7 @@
     const daysUntilIso=value=>{if(!value)return Infinity;const [year,month,day]=String(value).slice(0,10).split('-').map(Number),target=new Date(year,month-1,day),now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate());return Math.ceil((target-today)/86400000);};
     function updateHomePriority(){
       const today=document.getElementById('homeTodayPlan'),next=document.getElementById('homeNextMatch'),reminder=document.getElementById('homeReminderCard'),history=document.getElementById('homeHistoryStats'),nextDays=daysUntilIso(next.dataset.matchDate),nextUrgent=nextDays>=0&&nextDays<=3;
-      next.classList.toggle('urgent',nextUrgent);reminder.classList.toggle('urgent',homeWatchUrgent);document.getElementById('homeNextUrgency').textContent=nextUrgent?`${nextDays===0?'今天':nextDays+' 天后'}开赛`:'下一场比赛';document.getElementById('homeReminderUrgency').textContent=homeWatchUrgent?'3 天内有关注比赛':'观赛提醒';
+      next.classList.toggle('urgent',nextUrgent);reminder.classList.toggle('urgent',homeWatchUrgent);document.getElementById('homeNextUrgency').textContent=nextUrgent?`${nextDays===0?'今天':nextDays+' 天后'}开赛`:'下一场比赛';document.getElementById('homeReminderUrgency').textContent=homeWatchUrgent?'3 天内有关注比赛':'关注球队赛程';
       if(nextUrgent&&homeWatchUrgent){next.style.order='1';reminder.style.order='2';today.style.order='3';}
       else if(nextUrgent){next.style.order='1';today.style.order='2';reminder.style.order='3';}
       else if(homeWatchUrgent){reminder.style.order='1';today.style.order='2';next.style.order='3';}
@@ -1053,13 +1044,12 @@
     const findClub=name=>{for(const league of clubLeagues){const club=leagueClubs(league).find(item=>item.name===name);if(club)return{league,club};const fallback=league.clubs.find(item=>item[0]===name);if(fallback)return{league,club:{name:fallback[0],mark:fallback[1],providerId:null}};}return null;};
     const defaultPlayerProfile={nickname:'足球爱好者',jersey:'7',foot:'右脚',position:'中场',secondary:'CM / DM',goal:'弱势脚 + 体能',format:'7v7'};
     let selectedTeamCandidate='', selectedTeamProviderId=null, activeClubLeague='premier', clubPickerMode='main', photoItems=[], pendingPhotoUrl='', pendingPhotoFile=null;
-    let profilePrefs={club:'',league:'',providerTeamId:null,reminder:false,lead:'30',mainReminderDefaulted:false,followedTeams:[]},accountPrefs={loggedIn:false,name:'',contact:''},playerProfile={...defaultPlayerProfile};
+    let profilePrefs={club:'',league:'',providerTeamId:null,followedTeams:[]},accountPrefs={loggedIn:false,name:'',contact:''},playerProfile={...defaultPlayerProfile};
     try{profilePrefs={...profilePrefs,...JSON.parse(localStorage.getItem('footballLabProfile')||'{}')};}catch(_){}
     try{accountPrefs={...accountPrefs,...JSON.parse(localStorage.getItem('footballLabAccount')||'{}')};}catch(_){}
     try{playerProfile={...playerProfile,...JSON.parse(localStorage.getItem('footballLabPlayerProfile')||'{}')};}catch(_){}
     function saveProfilePrefs(){try{localStorage.setItem('footballLabProfile',JSON.stringify(profilePrefs));}catch(_){}}
     if(!Array.isArray(profilePrefs.followedTeams))profilePrefs.followedTeams=[];
-    if(profilePrefs.club&&!profilePrefs.mainReminderDefaulted){profilePrefs.reminder=true;profilePrefs.mainReminderDefaulted=true;saveProfilePrefs();}
     function renderAccount(){const logged=accountPrefs.loggedIn&&Boolean(accountPrefs.name.trim());document.getElementById('accountAvatar').textContent=logged?(accountPrefs.name.trim()[0]||'我'):'访';document.getElementById('accountTitle').textContent=logged?accountPrefs.name:'尚未设置昵称';document.getElementById('accountSubtitle').textContent=logged?`${accountPrefs.contact?accountPrefs.contact+' · ':''}仅保存在当前浏览器`:'训练、比赛、阵容和照片仅保存在当前浏览器';document.getElementById('loginAccount').textContent=logged?'修改本地档案':'设置本地档案';document.getElementById('loginAccount').classList.remove('hidden');document.getElementById('logoutAccount').classList.toggle('hidden',!logged);if(currentScreen==='home')refreshPageHeader();}
     document.getElementById('loginAccount').onclick=()=>{document.getElementById('accountName').value=accountPrefs.name;document.getElementById('accountContact').value=accountPrefs.contact;openModal('accountModal');};
     document.getElementById('accountForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),name=String(f.get('name')).trim();if(!name){showToast('请填写昵称');return;}accountPrefs={loggedIn:true,name,contact:String(f.get('contact')).trim()};try{localStorage.setItem('footballLabAccount',JSON.stringify(accountPrefs));}catch(_){}renderAccount();closeModal('accountModal');showToast('本地档案已保存到当前浏览器');};
@@ -1067,10 +1057,6 @@
     function renderPlayerProfile(){document.getElementById('profileJersey').textContent=playerProfile.jersey;document.querySelector('.avatar').textContent=playerProfile.jersey;document.getElementById('profileHeadline').textContent=playerProfile.position+' · '+playerProfile.nickname;document.getElementById('profileSubline').textContent=playerProfile.foot+' · 主要位置 '+(playerProfile.secondary||playerProfile.position);document.getElementById('profileGoal').textContent=playerProfile.goal||'暂未设置';document.getElementById('profileFormat').textContent=playerProfile.format;if(currentScreen==='home')refreshPageHeader();}
     document.getElementById('editPlayerProfile').onclick=()=>{document.getElementById('playerNickname').value=playerProfile.nickname;document.getElementById('jerseyNumber').value=playerProfile.jersey;document.getElementById('dominantFoot').value=playerProfile.foot;document.getElementById('primaryPosition').value=playerProfile.position;document.getElementById('secondaryPosition').value=playerProfile.secondary;document.getElementById('preferredFormat').value=playerProfile.format;document.getElementById('seasonGoal').value=playerProfile.goal;openModal('profileModal');};
     document.getElementById('profileForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),jersey=String(f.get('jersey')).trim();if(!/^\d{1,2}$/.test(jersey)){showToast('球衣号码请输入 0–99');return;}playerProfile={nickname:String(f.get('nickname')).trim(),jersey,foot:String(f.get('foot')),position:String(f.get('position')),secondary:String(f.get('secondary')).trim(),goal:String(f.get('goal')).trim(),format:String(f.get('format'))};try{localStorage.setItem('footballLabPlayerProfile',JSON.stringify(playerProfile));}catch(_){}renderPlayerProfile();closeModal('profileModal');showToast('球员档案已更新');};
-    function renderReminder(){
-      const button=document.getElementById('reminderToggle'),lead=document.getElementById('reminderLead');
-      button.classList.toggle('on',profilePrefs.reminder);button.textContent=profilePrefs.reminder?'已开启':'未开启';button.setAttribute('aria-checked',String(profilePrefs.reminder));lead.disabled=!profilePrefs.reminder;lead.value=profilePrefs.lead;
-    }
     const formatMatchDate=value=>new Date(value).toLocaleString('zh-CN',{month:'long',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit',hour12:false});
     const nextMatchRequests={};
     const getNextMatch=teamId=>{
@@ -1080,7 +1066,7 @@
     };
     const reminderTeams=()=>{
       const teams=[];
-      if(profilePrefs.club)teams.push({club:profilePrefs.club,league:profilePrefs.league,providerTeamId:profilePrefs.providerTeamId,reminder:profilePrefs.reminder,lead:profilePrefs.lead,main:true,index:-1});
+      if(profilePrefs.club)teams.push({club:profilePrefs.club,league:profilePrefs.league,providerTeamId:profilePrefs.providerTeamId,main:true,index:-1});
       profilePrefs.followedTeams.forEach((team,index)=>teams.push({...team,main:false,index}));
       return teams;
     };
@@ -1092,20 +1078,19 @@
       return formatMatchDate(match.utcDate)+' · '+(isHome?'主场 vs ':'客场 vs ')+(opponent.shortName||opponent.name);
     };
     function watchTeamMarkup(team,allowRemove){
-      const known=findClub(team.club),mark=known?known.club.mark:team.club.slice(0,2),leagueName=known?known.league.name:(team.league||'其他联赛'),enabled=Boolean(team.reminder),key=team.main?'main':'follow:'+team.index;
-      return `<div class="watch-team ${team.main?'main':''}"><div class="watch-team-mark">${escapeHtml(mark)}</div><div class="watch-team-copy"><b>${escapeHtml(team.club)}${team.main?' · 主队':''}</b><small data-watch-match="${escapeHtml(teamIdentity(team))}">${escapeHtml(leagueName)} · ${team.providerTeamId?'正在读取下一场…':'暂不提供实时赛程'}</small></div><div class="watch-team-actions"><button class="switch ${enabled?'on':''}" data-watch-toggle="${key}" role="switch" aria-checked="${enabled}">${enabled?'提醒中':'未提醒'}</button>${allowRemove&&!team.main?`<button class="watch-remove" data-watch-remove="${team.index}" aria-label="取消关注 ${escapeHtml(team.club)}">×</button>`:''}</div></div>`;
+      const known=findClub(team.club),mark=known?known.club.mark:team.club.slice(0,2),leagueName=known?known.league.name:(team.league||'其他联赛');
+      return `<div class="watch-team ${team.main?'main':''}"><div class="watch-team-mark">${escapeHtml(mark)}</div><div class="watch-team-copy"><b>${escapeHtml(team.club)}${team.main?' · 主队':''}</b><small data-watch-match="${escapeHtml(teamIdentity(team))}">${escapeHtml(leagueName)} · ${team.providerTeamId?'正在读取下一场…':'暂不提供实时赛程'}</small></div><div class="watch-team-actions">${allowRemove&&!team.main?`<button class="watch-remove" data-watch-remove="${team.index}" aria-label="取消关注 ${escapeHtml(team.club)}">×</button>`:''}</div></div>`;
     }
     let reminderRenderToken=0;
     function renderReminderCenter(){
       const renderToken=++reminderRenderToken;
-      const teams=reminderTeams(),enabled=teams.filter(team=>team.reminder).length,home=document.getElementById('homeReminderList'),profile=document.getElementById('profileFollowedTeams'),followed=teams.filter(team=>!team.main);
+      const teams=reminderTeams(),home=document.getElementById('homeReminderList'),profile=document.getElementById('profileFollowedTeams'),followed=teams.filter(team=>!team.main);
       homeWatchUrgent=false;updateHomePriority();
-      document.getElementById('homeReminderSummary').textContent=teams.length?enabled+' 支球队已开启提醒':'主队默认开启提醒';
-      home.innerHTML=teams.length?teams.map(team=>watchTeamMarkup(team,true)).join(''):'<div class="watch-empty">设置主队后，下一场比赛会显示在这里。</div>';
+      document.getElementById('homeReminderSummary').textContent=teams.length?teams.length+' 支球队 · 打开网站自动更新':'打开网站后自动更新下一场比赛';
+      home.innerHTML=teams.length?teams.map(team=>watchTeamMarkup(team,true)).join(''):'<div class="watch-empty">设置主队或关注球队后，下一场比赛会显示在这里。</div>';
       profile.innerHTML=followed.length?followed.map(team=>watchTeamMarkup(team,true)).join(''):'<div class="watch-empty">还没有关注其他球队。</div>';
-      document.querySelectorAll('[data-watch-toggle]').forEach(button=>button.onclick=()=>{const key=button.dataset.watchToggle;if(key==='main')profilePrefs.reminder=!profilePrefs.reminder;else{const index=Number(key.split(':')[1]);if(profilePrefs.followedTeams[index])profilePrefs.followedTeams[index].reminder=!profilePrefs.followedTeams[index].reminder;}saveProfilePrefs();renderReminder();renderReminderCenter();showToast('观赛提醒设置已保存');});
       document.querySelectorAll('[data-watch-remove]').forEach(button=>button.onclick=()=>{const index=Number(button.dataset.watchRemove),team=profilePrefs.followedTeams[index];if(!team)return;profilePrefs.followedTeams.splice(index,1);saveProfilePrefs();renderReminderCenter();showToast('已取消关注 '+team.club);});
-      Promise.all(teams.filter(team=>team.providerTeamId).map(async team=>{const match=await getNextMatch(team.providerTeamId),text=reminderMatchText(team,match);document.querySelectorAll(`[data-watch-match="${CSS.escape(teamIdentity(team))}"]`).forEach(node=>node.textContent=text);return Boolean(team.reminder&&match?.utcDate&&daysUntilIso(match.utcDate)>=0&&daysUntilIso(match.utcDate)<=3);})).then(results=>{if(renderToken!==reminderRenderToken)return;homeWatchUrgent=results.some(Boolean);updateHomePriority();});
+      Promise.all(teams.filter(team=>team.providerTeamId).map(async team=>{const match=await getNextMatch(team.providerTeamId),text=reminderMatchText(team,match);document.querySelectorAll(`[data-watch-match="${CSS.escape(teamIdentity(team))}"]`).forEach(node=>node.textContent=text);return Boolean(match?.utcDate&&daysUntilIso(match.utcDate)>=0&&daysUntilIso(match.utcDate)<=3);})).then(results=>{if(renderToken!==reminderRenderToken)return;homeWatchUrgent=results.some(Boolean);updateHomePriority();});
     }
     async function loadNextMatch(teamId,leagueName){
       const target=document.getElementById('clubNextMatch');target.textContent=leagueName+' · 正在读取下一场比赛…';const match=await getNextMatch(teamId);target.textContent=match===undefined?leagueName+' · 赛程数据暂时不可用':match===null?leagueName+' · 暂无已公布的下一场比赛':reminderMatchText({providerTeamId:teamId},match);
@@ -1125,12 +1110,12 @@
     }
     function renderClub(){
       const hasClub=Boolean(profilePrefs.club);document.getElementById('clubEmpty').classList.toggle('hidden',hasClub);document.getElementById('clubConfigured').classList.toggle('hidden',!hasClub);renderReminderCenter();if(!hasClub)return;
-      const match=findClub(profilePrefs.club),leagueName=match?match.league.name:(profilePrefs.league||'其他联赛'),mark=document.getElementById('clubMark');document.getElementById('clubName').textContent=profilePrefs.club;mark.textContent=match?match.club.mark:profilePrefs.club.slice(0,2);renderReminder();if(profilePrefs.providerTeamId){loadNextMatch(profilePrefs.providerTeamId,leagueName);}else if(match&&liveCompetitionCodes[match.league.id]){document.getElementById('clubNextMatch').textContent=leagueName+' · 正在匹配实时球队…';loadLeagueData(match.league.id);}else{document.getElementById('clubNextMatch').textContent=leagueName+' · 暂不提供实时赛程';}
+      const match=findClub(profilePrefs.club),leagueName=match?match.league.name:(profilePrefs.league||'其他联赛'),mark=document.getElementById('clubMark');document.getElementById('clubName').textContent=profilePrefs.club;mark.textContent=match?match.club.mark:profilePrefs.club.slice(0,2);if(profilePrefs.providerTeamId){loadNextMatch(profilePrefs.providerTeamId,leagueName);}else if(match&&liveCompetitionCodes[match.league.id]){document.getElementById('clubNextMatch').textContent=leagueName+' · 正在匹配实时球队…';loadLeagueData(match.league.id);}else{document.getElementById('clubNextMatch').textContent=leagueName+' · 暂不提供实时赛程';}
     }
     function renderClubPicker(search=''){const league=clubLeagues.find(item=>item.id===activeClubLeague)||clubLeagues[0],query=search.trim().toLowerCase(),clubs=leagueClubs(league).filter(item=>item.name.toLowerCase().includes(query)||item.mark.toLowerCase().includes(query)),state=liveLeagueState[league.id];document.getElementById('clubLeagueTabs').innerHTML=clubLeagues.map(item=>`<button class="league-tab ${item.id===league.id?'active':''}" data-league="${item.id}">${item.name}</button>`).join('');document.getElementById('clubLeagueSeason').textContent=league.name+' · '+league.season+' 赛季'+(state==='loading'?' · 正在同步':state==='ready'?' · 实时名单':'');document.getElementById('clubResultCount').textContent=clubs.length+' 支球队';document.getElementById('teamOptions').innerHTML=clubs.length?clubs.map(item=>`<button class="team-option ${item.name===selectedTeamCandidate?'active':''}" data-team="${escapeHtml(item.name)}" data-provider-id="${item.providerId||''}"><span>${escapeHtml(item.mark)}</span>${escapeHtml(item.name)}</button>`).join(''):'<div class="photo-empty" style="min-height:90px"><div><b>没有找到球队</b><span>可尝试简称，或在下方直接填写。</span></div></div>';}
     function openClubPicker(mode='main'){
       clubPickerMode=mode;const adding=mode==='follow';selectedTeamCandidate=adding?'':profilePrefs.club;selectedTeamProviderId=adding?null:profilePrefs.providerTeamId;const known=adding?null:findClub(profilePrefs.club);activeClubLeague=known?known.league.id:(adding?activeClubLeague:(profilePrefs.league||'premier'));if(!clubLeagues.some(item=>item.id===activeClubLeague))activeClubLeague='premier';
-      document.getElementById('clubModalTitle').textContent=adding?'添加关注球队':'选择我的主队';document.getElementById('clubModalCopy').textContent=adding?'选择一支想持续关注赛程的球队，保存后默认开启观赛提醒。':'选择最关注的球队。保存为主队后，观赛提醒默认开启。';document.getElementById('saveClub').textContent=adding?'添加并开启提醒':'设为主队';document.getElementById('customTeam').value=adding||known?'':profilePrefs.club;document.getElementById('clubSearch').value='';renderClubPicker();loadLeagueData(activeClubLeague);openModal('clubModal');
+      document.getElementById('clubModalTitle').textContent=adding?'添加关注球队':'选择我的主队';document.getElementById('clubModalCopy').textContent=adding?'选择一支想持续查看赛程的球队，保存后会显示在首页。':'选择最关注的球队，首页会自动显示它的下一场比赛。';document.getElementById('saveClub').textContent=adding?'添加关注':'设为主队';document.getElementById('customTeam').value=adding||known?'':profilePrefs.club;document.getElementById('clubSearch').value='';renderClubPicker();loadLeagueData(activeClubLeague);openModal('clubModal');
     }
     document.getElementById('chooseClub').onclick=()=>openClubPicker('main');document.getElementById('changeClub').onclick=()=>openClubPicker('main');document.getElementById('addFollowedTeam').onclick=()=>openClubPicker('follow');document.getElementById('homeAddFollowedTeam').onclick=()=>openClubPicker('follow');
     document.getElementById('clubLeagueTabs').onclick=e=>{const button=e.target.closest('[data-league]');if(!button)return;activeClubLeague=button.dataset.league;selectedTeamCandidate='';selectedTeamProviderId=null;document.getElementById('clubSearch').value='';renderClubPicker();loadLeagueData(activeClubLeague);};
@@ -1141,12 +1126,10 @@
       const custom=document.getElementById('customTeam').value.trim(),club=custom||selectedTeamCandidate;if(!club){showToast('请先选择或填写一支球队');return;}const known=findClub(club),league=known?known.league.id:'其他联赛',providerTeamId=custom?null:(selectedTeamProviderId||(known&&known.club.providerId)||null),identity=providerTeamId?'id:'+providerTeamId:'name:'+club.toLowerCase();
       if(clubPickerMode==='follow'){
         const mainIdentity=profilePrefs.providerTeamId?'id:'+profilePrefs.providerTeamId:'name:'+profilePrefs.club.toLowerCase();if(profilePrefs.club&&identity===mainIdentity){showToast('这支球队已经是你的主队');return;}if(profilePrefs.followedTeams.some(team=>teamIdentity(team)===identity)){showToast('这支球队已经在关注列表');return;}
-        profilePrefs.followedTeams.push({club,league,providerTeamId,reminder:true,lead:profilePrefs.lead||'30'});saveProfilePrefs();renderReminderCenter();closeModal('clubModal');showToast('已关注 '+club+'，观赛提醒默认开启');return;
+        profilePrefs.followedTeams.push({club,league,providerTeamId});saveProfilePrefs();renderReminderCenter();closeModal('clubModal');showToast('已关注 '+club+'，赛程会显示在首页');return;
       }
-      profilePrefs.club=club;profilePrefs.league=league;profilePrefs.providerTeamId=providerTeamId;profilePrefs.reminder=true;profilePrefs.mainReminderDefaulted=true;profilePrefs.followedTeams=profilePrefs.followedTeams.filter(team=>teamIdentity(team)!==identity);saveProfilePrefs();renderClub();closeModal('clubModal');showToast('主队已保存，观赛提醒已默认开启');
+      profilePrefs.club=club;profilePrefs.league=league;profilePrefs.providerTeamId=providerTeamId;profilePrefs.followedTeams=profilePrefs.followedTeams.filter(team=>teamIdentity(team)!==identity);saveProfilePrefs();renderClub();closeModal('clubModal');showToast('主队已保存，赛程会显示在首页');
     };
-    document.getElementById('reminderToggle').onclick=()=>{profilePrefs.reminder=!profilePrefs.reminder;saveProfilePrefs();renderReminder();renderReminderCenter();showToast(profilePrefs.reminder?'主队观赛提醒已开启':'主队观赛提醒已关闭');};
-    document.getElementById('reminderLead').onchange=e=>{profilePrefs.lead=e.target.value;saveProfilePrefs();renderReminderCenter();showToast('提醒时间已保存');};
     const escapeHtml=value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
 
     // Home history calendar and period statistics share the same activity records.
