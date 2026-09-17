@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#08110f">
-  <meta name="description" content="面向足球爱好者的个人训练、比赛记录与战术可视化原型。">
-  <title>我的足球实验室 · V1 原型</title>
+  <meta name="description" content="面向足球爱好者的个人训练、比赛记录与战术可视化工具。">
+  <title>我的足球实验室 · 内测版</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%2308110f'/%3E%3Cpath d='M10 32h44M32 10v44M10 18c15 7 29 7 44 0M10 46c15-7 29-7 44 0' fill='none' stroke='%23b7ff52' stroke-width='3' opacity='.8'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ff6b50' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E">
   <style>
     :root {
@@ -52,11 +52,31 @@
     .nav-btn:hover { background: var(--panel); color: var(--ink); }
     .nav-btn.active { background: var(--panel-2); color: var(--lime); box-shadow: inset 3px 0 0 var(--lime); }
     .nav-icon { width: 24px; text-align: center; font-size: 1.08rem; }
+    .nav-icon svg { display: block; width: 21px; height: 21px; margin: auto; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .siu-player { overflow: visible; transform-origin: 50% 82%; }
+    .siu-pose { opacity: 0; }
+    .nav-btn[data-screen="matches"] { position: relative; overflow: visible; }
+    .nav-btn.siu .siu-player { animation: siu-jump .82s cubic-bezier(.2,.75,.25,1); }
+    .nav-btn.siu .siu-idle { animation: siu-idle-swap .82s linear; }
+    .nav-btn.siu .siu-pose { animation: siu-pose-swap .82s linear; }
+    .nav-btn.siu::after { content: "SIU!"; position: absolute; left: 37px; top: -4px; color: var(--lime); font-size: .62rem; font-weight: 900; letter-spacing: .06em; pointer-events: none; opacity: 0; animation: siu-callout .82s ease-out; }
+    @keyframes siu-jump { 0%,100% { transform: translateY(0) rotate(0) scale(1); } 27% { transform: translateY(-8px) rotate(-14deg) scale(1.05); } 48% { transform: translateY(-9px) rotate(14deg) scale(1.05); } 72% { transform: translateY(0) rotate(0) scale(1.13); } }
+    @keyframes siu-idle-swap { 0%,30%,86%,100% { opacity: 1; } 31%,85% { opacity: 0; } }
+    @keyframes siu-pose-swap { 0%,30%,86%,100% { opacity: 0; } 31%,85% { opacity: 1; } }
+    @keyframes siu-callout { 0%,42% { opacity: 0; transform: translateY(4px) scale(.7); } 58% { opacity: 1; transform: translateY(-3px) scale(1.08); } 100% { opacity: 0; transform: translateY(-9px) scale(1); } }
+    @media (prefers-reduced-motion: reduce) { .nav-btn.siu .siu-player, .nav-btn.siu .siu-idle, .nav-btn.siu .siu-pose, .nav-btn.siu::after { animation-duration: .01ms; } }
     .sidebar-foot { margin-top: auto; padding: 16px 13px; border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(145deg, rgba(183,255,82,.08), transparent); }
     .sidebar-foot strong { display: block; font-size: .84rem; }
     .sidebar-foot p { margin: 5px 0 0; color: var(--muted); font-size: .75rem; }
     .main { min-width: 0; padding: 26px clamp(20px, 4vw, 48px) 70px; }
     .topbar { max-width: 1320px; margin: 0 auto 24px; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+    .topbar.home-centered { display:grid; grid-template-columns:42px minmax(0,1fr) 42px; text-align:center; }
+    .topbar.home-centered::before { content:""; width:42px; }
+    .topbar.home-centered > div:first-child { min-width:0; }
+    .topbar.home-centered .top-actions { justify-self:end; }
+    .topbar.home-centered h1 { white-space:nowrap; font-size:clamp(.9rem,2.3vw,2.15rem); }
+    .release-notice { max-width: 1320px; margin: -8px auto 24px; padding: 11px 14px; border: 1px solid rgba(183,255,82,.25); border-radius: 12px; background: rgba(183,255,82,.06); color: var(--muted); font-size: .78rem; }
+    .release-notice strong { color: var(--lime); }
     .eyebrow { margin: 0 0 3px; color: var(--lime); text-transform: uppercase; letter-spacing: .13em; font-size: .72rem; font-weight: 800; }
     h1 { margin: 0; font-size: clamp(1.55rem, 2.3vw, 2.15rem); line-height: 1.12; letter-spacing: -.045em; }
     .top-actions { display: flex; align-items: center; gap: 10px; }
@@ -64,7 +84,12 @@
     .screen { display: none; max-width: 1320px; margin: 0 auto; animation: appear .25s ease; }
     .screen.active { display: block; }
     @keyframes appear { from { opacity: 0; transform: translateY(4px); } }
-    .grid-home { display: grid; grid-template-columns: minmax(0,1.55fr) minmax(280px,.75fr); gap: 20px; align-items: start; }
+    .home-flow { display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:20px; align-items:start; }
+    .home-module { grid-column:1/-1; }
+    .home-module.today { grid-column:span 8; }
+    .home-module.next-match { grid-column:span 4; }
+    .home-module.urgent { grid-column:1/-1; border-color:rgba(255,107,80,.52); box-shadow:0 18px 50px rgba(255,107,80,.08); }
+    .home-module.urgent .urgent-label { color:var(--coral); border-color:rgba(255,107,80,.38); background:rgba(255,107,80,.09); }
     .stack { display: grid; gap: 20px; }
     .card { background: rgba(16,28,25,.94); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
     .card-body { padding: 22px; }
@@ -98,19 +123,56 @@
     .stat span { color: var(--muted); font-size: .74rem; }
     .stat strong { display:block; margin-top:5px; font-size:1.38rem; letter-spacing:-.04em; }
     .stat small { color: var(--lime); font-size:.7rem; }
-    .timeline { display: grid; gap: 0; }
-    .event { display: grid; grid-template-columns: 48px 1fr auto; gap: 12px; align-items: center; padding: 14px 0; border-top: 1px solid var(--line); }
-    .event:first-child { border-top: 0; padding-top: 2px; }
-    .date-tile { width:46px; padding:5px; border-radius:10px; background:var(--panel-2); text-align:center; }
-    .date-tile b { display:block; font-size:1rem; }
-    .date-tile small { color:var(--muted); font-size:.65rem; }
-    .event strong { display:block; font-size:.86rem; }
-    .event p { margin:2px 0 0; color:var(--muted); font-size:.75rem; }
-    .flow { display:grid; grid-template-columns:1fr auto 1fr auto 1fr; gap:8px; align-items:center; }
-    .flow-step { padding:15px 10px; border-radius:14px; text-align:center; background:var(--panel-2); border:1px solid var(--line); }
-    .flow-step b { display:block; font-size:.8rem; }
-    .flow-step small { color:var(--muted); font-size:.68rem; }
-    .flow-arrow { color:var(--lime); }
+    .home-insights { margin-top:0; }
+    .home-insights-head { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:18px; }
+    .home-insights-head h2 { margin:0; font-size:1.12rem; }
+    .home-insights-head p { margin:3px 0 0; color:var(--muted); font-size:.84rem; }
+    .home-insight-panel { display:none; }
+    .home-insight-panel.active { display:block; }
+    .home-history-grid { display:grid; grid-template-columns:minmax(300px,.88fr) minmax(0,1.12fr); gap:18px; }
+    .calendar-card, .day-detail, .stats-summary { padding:18px; border:1px solid var(--line); border-radius:16px; background:var(--panel-2); }
+    .calendar-nav { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px; }
+    .calendar-nav strong { font-size:.95rem; }
+    .calendar-nav button { width:38px; height:38px; border:1px solid var(--line); border-radius:11px; background:#0b1613; cursor:pointer; }
+    .calendar-weekdays, .calendar-grid { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:6px; }
+    .calendar-weekdays span { padding:3px 0 7px; color:var(--muted); text-align:center; font-size:.7rem; }
+    .calendar-day, .calendar-empty { min-height:44px; border-radius:11px; }
+    .calendar-day { position:relative; display:grid; place-items:center; border:1px solid transparent; background:#0b1613; color:var(--ink); font-size:.78rem; cursor:pointer; }
+    .calendar-day:hover { border-color:#48665b; }
+    .calendar-day.today { border-color:rgba(183,255,82,.45); }
+    .calendar-day.selected { border-color:var(--lime); background:rgba(183,255,82,.08); font-weight:900; }
+    .calendar-number { width:30px; height:30px; display:grid; place-items:center; border:2px solid transparent; border-radius:50%; }
+    .calendar-day.has-training .calendar-number { border-color:#ffdc58; }
+    .calendar-day.has-match .calendar-number { border-color:var(--coral); }
+    .calendar-day.has-training.has-match .calendar-number { border-color:var(--coral); box-shadow:0 0 0 2px #0b1613, 0 0 0 4px #ffdc58; }
+    .calendar-day.selected .calendar-number { background:var(--lime); color:#0b160e; }
+    .day-detail-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:13px; }
+    .day-detail-head h3 { margin:0; font-size:1rem; }
+    .day-detail-head p { margin:4px 0 0; color:var(--muted); font-size:.78rem; }
+    .day-activity-list { display:grid; gap:9px; }
+    .day-activity { display:grid; grid-template-columns:42px minmax(0,1fr) auto; gap:11px; align-items:center; padding:12px; border:1px solid var(--line); border-radius:13px; background:#0b1613; }
+    .activity-type { width:40px; height:40px; display:grid; place-items:center; border-radius:12px; background:rgba(183,255,82,.1); color:var(--lime); font-size:.72rem; font-weight:900; }
+    .day-activity.match .activity-type { background:rgba(255,107,80,.12); color:var(--coral); }
+    .day-activity strong { display:block; font-size:.84rem; }
+    .day-activity p { margin:3px 0 0; color:var(--muted); font-size:.74rem; }
+    .history-empty { min-height:178px; display:grid; place-items:center; padding:22px; border:1px dashed #365248; border-radius:14px; color:var(--muted); text-align:center; font-size:.8rem; }
+    .stats-periods { margin-bottom:16px; }
+    .custom-stats-range { display:grid; grid-template-columns:repeat(2,minmax(150px,1fr)) auto; gap:10px; align-items:end; margin:-6px 0 16px; padding:14px; border:1px solid var(--line); border-radius:14px; background:var(--panel-2); }
+    .custom-stats-range label { color:var(--muted); font-size:.74rem; }
+    .custom-stats-range input { width:100%; min-height:42px; margin-top:6px; padding:8px 10px; border:1px solid var(--line); border-radius:10px; background:#0b1613; color:var(--ink); }
+    .stats-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+    .stats-metric { padding:16px; border:1px solid var(--line); border-radius:14px; background:#0b1613; }
+    .stats-metric span { color:var(--muted); font-size:.74rem; }
+    .stats-metric strong { display:block; margin-top:6px; color:var(--ink); font-size:1.42rem; letter-spacing:-.04em; }
+    .stats-volume { margin-top:16px; padding:17px; border:1px solid var(--line); border-radius:14px; background:#0b1613; }
+    .stats-volume-head { display:flex; justify-content:space-between; gap:12px; margin-bottom:13px; }
+    .stats-volume-head strong { font-size:.86rem; }
+    .stats-volume-head span { color:var(--muted); font-size:.74rem; }
+    .volume-row { display:grid; grid-template-columns:64px minmax(0,1fr) 68px; align-items:center; gap:10px; margin-top:11px; color:var(--muted); font-size:.74rem; }
+    .volume-track { height:10px; overflow:hidden; border-radius:999px; background:#1b2c27; }
+    .volume-fill { height:100%; min-width:4px; border-radius:inherit; background:var(--lime); }
+    .volume-fill.match { background:var(--coral); }
+    .volume-row b { color:var(--ink); text-align:right; font-size:.75rem; }
     .section-head { display:flex; justify-content:space-between; align-items:flex-end; gap:16px; margin-bottom:18px; }
     .section-head p { margin:4px 0 0; color:var(--muted); font-size:.84rem; }
     .tabs { display:flex; gap:5px; padding:4px; width:max-content; max-width:100%; overflow:auto; border:1px solid var(--line); border-radius:13px; background:#0b1613; }
@@ -156,11 +218,27 @@
     .filters { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:15px; }
     .filter-btn { border:1px solid var(--line); background:var(--panel); color:var(--muted); padding:7px 11px; border-radius:999px; font-size:.75rem; cursor:pointer; }
     .filter-btn.active { color:#0a160d; background:var(--lime); border-color:var(--lime); font-weight:800; }
+    .library-filters { display:grid; gap:13px; margin-bottom:18px; padding:15px; border:1px solid var(--line); border-radius:15px; background:var(--panel-2); }
+    .library-filter-row { display:grid; grid-template-columns:88px minmax(0,1fr); gap:12px; align-items:start; }
+    .library-filter-row > b { padding-top:7px; font-size:.78rem; }
+    .library-filter-note { margin:0; color:var(--muted); font-size:.74rem; }
     .library-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
-    .drill-card { border:1px solid var(--line); border-radius:16px; padding:15px; background:var(--panel); cursor:pointer; transition:.2s ease; }
+    .drill-card { border:1px solid var(--line); border-radius:16px; padding:15px; background:var(--panel); transition:.2s ease; }
     .drill-card:hover { transform:translateY(-2px); border-color:#3d5a51; }
+    .drill-card.selected { border-color:var(--lime); background:rgba(183,255,82,.06); }
     .drill-card h3 { margin:12px 0 5px; font-size:.92rem; }
     .drill-card p { margin:0; color:var(--muted); font-size:.73rem; }
+    .drill-card-actions { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:12px; }
+    .drill-card-actions span { color:var(--muted); font-size:.7rem; }
+    .custom-plan-bar { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:16px; padding:14px 16px; border:1px solid rgba(183,255,82,.24); border-radius:14px; background:rgba(183,255,82,.06); }
+    .custom-plan-bar strong { display:block; font-size:.88rem; }
+    .custom-plan-bar span { color:var(--muted); font-size:.74rem; }
+    .set-control { display:flex; align-items:center; gap:7px; color:var(--muted); font-size:.72rem; }
+    .set-control input { width:62px; min-height:38px; padding:7px; text-align:center; }
+    .today-plan-layout { display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:20px; }
+    .today-plan-aside { padding:20px; }
+    .today-plan-aside h3 { margin:0 0 8px; }
+    .today-plan-aside p { margin:0 0 18px; color:var(--muted); font-size:.8rem; }
     .drill-visual { height:110px; border-radius:12px; overflow:hidden; background:var(--pitch); position:relative; border:1px solid rgba(255,255,255,.18); }
     .pitch-lines { position:absolute; inset:8px; border:1px solid rgba(255,255,255,.55); pointer-events:none; }
     .pitch-lines::before { content:""; position:absolute; left:50%; top:0; bottom:0; width:1px; background:rgba(255,255,255,.5); }
@@ -194,15 +272,41 @@
     .note-block b { font-size:.76rem; }
     .note-block p { margin:5px 0 0; color:#bdcbc6; font-size:.78rem; }
     .schedule-list { display:grid; gap:10px; }
-    .schedule { display:grid; grid-template-columns:62px 1fr auto; gap:12px; align-items:center; padding:14px; border:1px solid var(--line); border-radius:14px; }
+    .schedule { display:grid; grid-template-columns:62px minmax(0,1fr) auto auto; gap:12px; align-items:center; padding:14px; border:1px solid var(--line); border-radius:14px; }
     .schedule-date { text-align:center; border-right:1px solid var(--line); padding-right:12px; }
     .schedule-date b { display:block; font-size:1.1rem; }
     .schedule-date small { color:var(--muted); font-size:.68rem; }
     .schedule strong { display:block; font-size:.84rem; }
     .schedule p { margin:2px 0 0; color:var(--muted); font-size:.72rem; }
-    .tactics-layout { display:grid; grid-template-columns:270px minmax(420px,1fr) 280px; gap:16px; align-items:start; }
-    .tool-panel, .frames-panel { padding:17px; }
-    .tool-panel h3, .frames-panel h3 { margin:0 0 12px; font-size:.88rem; }
+    .match-priority { display:grid; gap:18px; }
+    .match-section-head { display:flex; justify-content:space-between; align-items:end; gap:12px; margin-bottom:11px; }
+    .match-section-head h2 { margin:0; font-size:1rem; }
+    .match-section-head p { margin:3px 0 0; color:var(--muted); font-size:.74rem; }
+    .match-card { display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:15px; align-items:center; padding:17px; border:1px solid var(--line); border-radius:16px; background:var(--panel-2); }
+    .match-card.next { border-color:rgba(183,255,82,.42); background:linear-gradient(135deg,rgba(183,255,82,.08),var(--panel-2)); }
+    .match-card.recent { border-color:rgba(104,168,255,.38); }
+    .match-card-main strong { display:block; font-size:.94rem; }
+    .match-card-main p { margin:4px 0 0; color:var(--muted); font-size:.76rem; }
+    .match-card-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:7px; }
+    .match-detail-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin-bottom:16px; }
+    .match-detail-grid div { padding:12px; border:1px solid var(--line); border-radius:12px; background:var(--panel-2); }
+    .match-detail-grid span { display:block; color:var(--muted); font-size:.68rem; }
+    .match-detail-grid b { display:block; margin-top:3px; font-size:.82rem; }
+    .match-detail-grid input { width:100%; margin-top:5px; border:1px solid var(--line); border-radius:8px; background:#0a1512; color:var(--ink); padding:8px; }
+    .match-photo-list { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
+    .match-photo-list img { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:10px; border:1px solid var(--line); }
+    #screen-matches .matches-grid { display:flex; flex-direction:column; gap:18px; }
+    #screen-matches .matches-grid > .stack, #screen-matches .matches-grid > aside { display:contents; }
+    #screen-matches .match-feature { order:2; }
+    #screen-matches .stack > article:nth-child(2), #screen-matches .matches-grid > aside > article:nth-child(3) { display:none; }
+    #screen-matches .matches-grid > aside > article:nth-child(1) { order:1; }
+    #screen-matches .matches-grid > aside > article:nth-child(2) { order:3; }
+    #screen-matches .performance { grid-template-columns:repeat(3,1fr); }
+    #screen-matches .performance .metric:last-child { display:none; }
+    .tactics-layout { display:grid; grid-template-columns:280px minmax(420px,1fr) 290px; gap:16px; align-items:start; }
+    .tactics-mode-tabs { grid-template-columns:repeat(2,minmax(0,1fr)); width:min(420px,100%); }
+    .tool-panel, .frames-panel, .lineup-panel { padding:17px; }
+    .tool-panel h3, .frames-panel h3, .lineup-panel h3 { margin:0 0 12px; font-size:.88rem; }
     .control-label { display:block; color:var(--muted); font-size:.71rem; margin:15px 0 7px; }
     .segmented { display:grid; grid-template-columns:repeat(4,1fr); gap:5px; }
     .segment { border:1px solid var(--line); background:var(--panel-2); border-radius:9px; padding:8px 3px; font-size:.7rem; cursor:pointer; }
@@ -211,9 +315,11 @@
     .formation { border:1px solid var(--line); background:var(--panel-2); border-radius:10px; padding:9px; font-size:.73rem; cursor:pointer; }
     .formation.active { border-color:var(--lime); color:var(--lime); }
     .tool-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:7px; }
-    .tool { min-height:52px; border:1px solid var(--line); background:var(--panel-2); border-radius:11px; cursor:pointer; font-size:.72rem; }
+    .tool { min-height:58px; border:1px solid var(--line); background:var(--panel-2); border-radius:11px; cursor:pointer; font-size:.72rem; touch-action:manipulation; }
     .tool span { display:block; font-size:1.05rem; margin-bottom:2px; }
     .tool.active { background:rgba(255,107,80,.12); border-color:var(--coral); color:#ff9883; }
+    .draw-status { margin-top:10px; padding:12px; border:1px solid rgba(255,107,80,.28); border-radius:12px; background:rgba(255,107,80,.07); color:#ffd4ca; font-size:.76rem; line-height:1.45; }
+    .draw-actions { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-top:9px; }
     .pitch-card { padding:12px; }
     .pitch-head { display:flex; justify-content:space-between; gap:12px; align-items:center; padding:2px 3px 12px; }
     .pitch-head strong { font-size:.85rem; }
@@ -226,14 +332,16 @@
     #tacticPitch .box.top { top:3%; border-top:0; }
     #tacticPitch .box.bottom { bottom:3%; border-bottom:0; }
     .player { position:absolute; width:34px; height:34px; margin:-17px 0 0 -17px; border-radius:50%; display:grid; place-items:center; background:#f5fbf7; color:#0f251a; border:3px solid #0e3221; font-size:.65rem; font-weight:900; box-shadow:0 4px 10px rgba(0,0,0,.3); cursor:grab; user-select:none; z-index:6; transition: left .65s ease, top .65s ease; }
+    .player.dragging, .ball.dragging { transition:none; }
     .player:active { cursor:grabbing; }
     .player.selected { outline:3px solid var(--lime); outline-offset:3px; }
+    .player.draw-origin, .ball.draw-origin { outline:4px solid var(--coral); outline-offset:4px; }
     .player::after { content:attr(data-name); position:absolute; top:38px; left:50%; transform:translateX(-50%); max-width:92px; padding:3px 6px; border-radius:7px; background:rgba(7,16,13,.84); color:#f1f7f3; font-size:.68rem; font-weight:800; line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; pointer-events:none; }
     .player[data-name=""]::after { display:none; }
     .player.opponent { background:#ff8369; color:#29100b; border-color:#6d2618; }
     .player-editor { margin-top:14px; padding:12px; border:1px solid var(--line); border-radius:12px; background:#0b1613; }
     .player-editor label { display:block; margin-bottom:7px; color:var(--muted); font-size:.78rem; }
-    .player-editor-row { display:grid; grid-template-columns:1fr auto; gap:7px; }
+    .player-editor-row { display:grid; grid-template-columns:72px minmax(0,1fr) auto; gap:7px; }
     .player-editor input { min-width:0; padding:9px 10px; }
     .player-editor-actions { display:flex; justify-content:space-between; gap:7px; margin-top:8px; }
     .player-editor-actions button { border:0; background:transparent; color:var(--muted); padding:5px 0; font-size:.75rem; cursor:pointer; }
@@ -252,11 +360,13 @@
     .frame strong { display:block; font-size:.74rem; }
     .frame small { color:var(--muted); font-size:.65rem; }
     .hint { margin-top:14px; padding:12px; background:rgba(183,255,82,.06); border-radius:11px; color:#b9c7c2; font-size:.7rem; }
-    .architecture { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:14px; padding:20px; margin-top:16px; }
-    .engine-block { padding:14px; border:1px solid var(--line); border-radius:14px; background:var(--panel-2); }
-    .engine-block b { display:block; font-size:.82rem; }
-    .engine-block small { color:var(--muted); font-size:.7rem; }
-    .engine-core { padding:18px; border-radius:50%; background:var(--lime); color:#0c180f; font-size:.72rem; font-weight:900; text-align:center; }
+    .lineup-list { display:grid; gap:7px; }
+    .lineup-entry { min-height:46px; display:grid; grid-template-columns:38px 1fr auto; align-items:center; gap:9px; padding:7px 9px; border:1px solid var(--line); border-radius:11px; background:var(--panel-2); text-align:left; cursor:pointer; }
+    .lineup-entry.active { border-color:var(--lime); }
+    .lineup-code { width:34px; height:34px; display:grid; place-items:center; border-radius:50%; background:#f5fbf7; color:#0f251a; font-size:.68rem; font-weight:900; }
+    .lineup-entry strong { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:.78rem; }
+    .lineup-entry small { color:var(--muted); font-size:.66rem; }
+    #screen-tactics[data-mode="lineup"] .ball { display:none; }
     .account-strip { display:grid; grid-template-columns:auto 1fr auto; gap:14px; align-items:center; padding:16px 18px; margin-bottom:20px; background:linear-gradient(120deg,rgba(104,168,255,.11),rgba(16,28,25,.94) 55%); }
     .account-avatar { width:48px; height:48px; display:grid; place-items:center; border-radius:15px; background:var(--blue); color:#081523; font-weight:950; }
     .account-copy h2 { margin:3px 0 2px; font-size:1rem; }
@@ -389,8 +499,9 @@
     .mobile-nav { display:none; }
     @media (max-width:1100px) {
       .tactics-layout { grid-template-columns:220px minmax(390px,1fr); }
-      .frames-panel { grid-column:1/-1; }
+      .frames-panel, .lineup-panel { grid-column:1/-1; }
       .frame-list { grid-template-columns:repeat(3,1fr); }
+      .lineup-list { grid-template-columns:repeat(2,1fr); }
       .library-grid { grid-template-columns:repeat(2,1fr); }
     }
     @media (max-width:850px) {
@@ -400,7 +511,10 @@
       #screen-training .section-head { align-items:stretch; flex-direction:column; }
       #screen-training .tabs { width:100%; }
       #screen-training .tab { flex:1; }
-      .grid-home, .training-grid, .training-builder, .matches-grid, .profile-grid { grid-template-columns:1fr; }
+      .home-flow, .training-grid, .training-builder, .matches-grid, .profile-grid { grid-template-columns:1fr; }
+      .home-module, .home-module.today, .home-module.next-match, .home-module.urgent { grid-column:auto; }
+      .today-plan-layout { grid-template-columns:1fr; }
+      .home-history-grid { grid-template-columns:1fr; }
       .account-strip { grid-template-columns:auto 1fr; }
       .account-actions { grid-column:1/-1; }
       .account-actions .btn { flex:1; }
@@ -411,13 +525,17 @@
       .mobile-nav .nav-btn { display:grid; justify-items:center; gap:1px; padding:7px 2px; font-size:.62rem; border-radius:12px; box-shadow:none; }
       .mobile-nav .nav-btn.active { background:var(--panel-2); }
       .tactics-layout { grid-template-columns:1fr; }
-      .tool-panel { order:2; }
-      .pitch-card { order:1; }
-      .frames-panel { order:3; }
+      #screen-tactics .section-head { align-items:stretch; flex-direction:column; }
+      .tactics-mode-tabs { width:100%; }
+      .tactics-mode-tabs .tab { flex:1; min-height:44px; }
+      .tool-panel { order:1; }
+      .pitch-card { order:2; }
+      .frames-panel, .lineup-panel { order:3; grid-column:auto; }
       #tacticPitch { max-height:none; width:min(100%,500px); }
-      .tool-grid { grid-template-columns:repeat(4,1fr); }
-      .architecture { grid-template-columns:1fr; text-align:center; }
-      .engine-core { border-radius:14px; }
+      .tool-grid { grid-template-columns:repeat(2,1fr); }
+      .player { width:40px; height:40px; margin:-20px 0 0 -20px; }
+      .player::after { top:43px; }
+      .lineup-list { grid-template-columns:1fr 1fr; }
     }
     @media (max-width:560px) {
       .top-actions .btn { display:none; }
@@ -434,28 +552,46 @@
       .photo-wall { grid-template-columns:repeat(2,minmax(0,1fr)); }
       .league-tabs { grid-template-columns:repeat(3,minmax(0,1fr)); }
       .team-options { grid-template-columns:1fr; }
+      .library-filter-row { grid-template-columns:1fr; gap:5px; }
       .runtime-layout { grid-template-columns:1fr; }
       .runtime-visual { min-height:auto; }
       .runtime-visual .drill-visual { height:145px; }
       .timer.runtime { font-size:3.2rem; }
       .field.full { grid-column:auto; }
-      .flow { grid-template-columns:1fr; }
-      .flow-arrow { transform:rotate(90deg); text-align:center; }
       .scoreboard { gap:7px; }
       .score { font-size:1.55rem; }
       .team-badge { width:48px; height:48px; }
+      .lineup-list { grid-template-columns:1fr; }
+      .player-editor-row { grid-template-columns:70px minmax(0,1fr); }
+      .player-editor-row .btn { grid-column:1/-1; }
+      .topbar.home-centered { grid-template-columns:34px minmax(0,1fr) 34px; gap:8px; }
+      .topbar.home-centered::before { width:34px; }
+      .topbar.home-centered .avatar { width:34px; height:34px; }
+      .home-insights-head { align-items:stretch; flex-direction:column; }
+      .home-insights-head .tabs { width:100%; }
+      .home-insights-head .tab { flex:1; }
+      .stats-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .custom-stats-range { grid-template-columns:1fr; }
+      .custom-stats-range .btn { width:100%; }
+      .day-activity { grid-template-columns:40px minmax(0,1fr); }
+      .schedule { grid-template-columns:52px minmax(0,1fr) auto; }
+      .schedule > .match-card-actions { grid-column:2/-1; }
+      .schedule > .match-card-actions .btn { flex:1; }
+      .match-detail-grid, .match-photo-list { grid-template-columns:repeat(2,1fr); }
+      .custom-plan-bar { align-items:stretch; flex-direction:column; }
+      .day-activity > .pill { grid-column:2; justify-self:start; }
     }
   </style>
 </head>
 <body>
   <div class="app-shell">
     <aside class="sidebar" aria-label="主导航">
-      <div class="brand"><div class="brand-mark">⚽</div><div><strong>我的足球实验室</strong><small>V1 交互原型</small></div></div>
+      <div class="brand"><div class="brand-mark">⚽</div><div><strong>我的足球实验室</strong><small>公开内测版</small></div></div>
       <nav class="nav">
         <button class="nav-btn active" data-screen="home"><span class="nav-icon">⌂</span>首页</button>
         <button class="nav-btn" data-screen="training"><span class="nav-icon">◴</span>训练</button>
-        <button class="nav-btn" data-screen="matches"><span class="nav-icon">⚽</span>比赛</button>
-        <button class="nav-btn" data-screen="tactics"><span class="nav-icon">↗</span>战术板</button>
+        <button class="nav-btn" data-screen="matches"><span class="nav-icon"><svg class="siu-player" viewBox="0 0 24 24" aria-hidden="true"><g class="siu-idle"><circle cx="12" cy="4" r="2"></circle><path d="M12 6.5v7.5M12 9l-4 3M12 9l4 3M12 14l-3 6M12 14l3 6"></path></g><g class="siu-pose"><circle cx="12" cy="4" r="2"></circle><path d="M12 6.5v7.5M12 9L5 6M12 9l7-3M12 14l-5 6M12 14l5 6"></path></g></svg></span>比赛</button>
+        <button class="nav-btn" data-screen="tactics"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M12 4v16"></path><circle cx="12" cy="12" r="3"></circle><circle cx="7" cy="9" r="1" fill="currentColor" stroke="none"></circle><circle cx="17" cy="15" r="1" fill="currentColor" stroke="none"></circle></svg></span>战术板</button>
         <button class="nav-btn" data-screen="profile"><span class="nav-icon">◎</span>我的</button>
       </nav>
       <div class="sidebar-foot"><strong>本周目标 · 3/4</strong><p>再完成 1 次训练，达成连续四周目标。</p></div>
@@ -463,41 +599,40 @@
 
     <main class="main">
       <header class="topbar">
-        <div><p class="eyebrow" id="pageEyebrow">9 月 13 日 · 周日</p><h1 id="pageTitle">晚上好，今天练什么？</h1></div>
+        <div><p class="eyebrow" id="pageEyebrow">今天</p><h1 id="pageTitle">足球爱好者，无论今天怎么样，来吧！</h1></div>
         <div class="top-actions"><div class="avatar" aria-label="用户头像">7</div></div>
       </header>
+      <p class="release-notice" id="siteNotice"><strong>网站通知</strong>：公开内测期间功能会持续调整。登录后，个人档案、训练与比赛数据、阵容和照片可同步到云端；观赛提醒暂不发送系统推送。</p>
 
       <section class="screen active" id="screen-home">
-        <div class="grid-home">
-          <div class="stack">
-            <article class="card workout-hero"><div class="card-body">
-              <div class="workout-top"><div><span class="pill live">● 今日计划</span><h2>第一脚触球 · 进阶</h2><p>个人训练 · 控球 / 传球 / 爆发力</p></div><div class="duration"><strong>62</strong><span>分钟</span></div></div>
-              <div class="session-strip">
-                <div class="session-part"><span class="num">01</span><strong>动态热身</strong><small>8 分钟</small></div>
-                <div class="session-part"><span class="num">02</span><strong>Ball Mastery</strong><small>4 × 60秒</small></div>
-                <div class="session-part"><span class="num">03</span><strong>双脚墙传</strong><small>4 × 50次</small></div>
-                <div class="session-part"><span class="num">04</span><strong>20m 冲刺</strong><small>6 组</small></div>
-              </div>
-              <div class="button-row"><button class="btn primary" id="startWorkout">▶ 开始训练</button><button class="btn ghost" data-screen="training">查看计划</button></div>
-            </div></article>
-            <div class="mini-stats">
-              <div class="stat"><span>本周训练</span><strong id="weekSessions">3 次</strong><small>↑ 比上周多 1 次</small></div>
-              <div class="stat"><span>连续训练</span><strong>12 天</strong><small>个人最佳 18 天</small></div>
-              <div class="stat"><span>本月时长</span><strong id="monthMinutes">326 分</strong><small>目标完成 76%</small></div>
+        <div class="home-flow" id="homeFlow">
+          <article class="card workout-hero home-module today" id="homeTodayPlan"><div class="card-body">
+            <div class="workout-top"><div><span class="pill live">● 今日计划</span><h2 id="homePlanTitle">第一脚触球 · 进阶</h2><p id="homePlanMeta">个人训练 · 控球 / 传球 / 爆发力</p></div><div class="duration"><strong id="homePlanDuration">62</strong><span>分钟</span></div></div>
+            <div class="session-strip" id="homePlanItems"></div>
+            <div class="button-row"><button class="btn primary" id="startWorkout">▶ 开始训练</button><button class="btn ghost" id="viewTodayPlan">查看计划</button></div>
+          </div></article>
+          <article class="card home-module next-match" id="homeNextMatch" data-match-date="2026-09-20"><div class="card-body"><div class="card-header"><div><span class="pill urgent-label" id="homeNextUrgency">下一场比赛</span><h2 style="margin-top:10px">下一场比赛</h2><p id="homeNextDate">9 月 20 日 · 20:00</p></div><span class="pill" id="homeNextFormat">7v7</span></div><div class="scoreboard" style="margin:12px 0 20px"><div class="team"><div class="team-badge">法</div><strong>法学院</strong></div><div class="score" style="font-size:1rem;color:var(--muted)">VS</div><div class="team"><div class="team-badge" style="background:rgba(255,107,80,.12)" id="homeNextOpponentMark">经</div><strong id="homeNextOpponent">经管学院</strong></div></div><p class="data-source-note" id="homeNextVenue">东区 2 号场</p><button class="btn ghost" style="width:100%;margin-top:10px" data-screen="matches">查看比赛准备</button></div></article>
+          <article class="card home-module reminder" id="homeReminderCard"><div class="card-body"><div class="card-header"><div><span class="pill urgent-label" id="homeReminderUrgency">观赛提醒</span><h2 style="margin-top:10px">观赛提醒</h2><p id="homeReminderSummary">主队默认开启提醒</p></div><button class="btn primary small" id="homeAddFollowedTeam">＋ 关注球队</button></div><div class="watch-list" id="homeReminderList"><div class="watch-empty">设置主队后，下一场比赛会显示在这里。</div></div><p class="data-source-note">Football data provided by the <a href="https://www.football-data.org/" target="_blank" rel="noreferrer">Football-Data.org API</a></p></div></article>
+          <article class="card home-insights home-module" id="homeHistoryStats"><div class="card-body">
+          <div class="home-insights-head"><div><h2>历史与统计</h2><p>回看每天的足球记录，查看不同周期的累计表现。</p></div><div class="tabs" role="tablist" aria-label="历史与统计"><button class="tab active" data-home-insight="history" aria-selected="true">历史</button><button class="tab" data-home-insight="stats" aria-selected="false">统计</button></div></div>
+          <div class="home-insight-panel active" data-home-panel="history">
+            <div class="home-history-grid">
+              <div class="calendar-card"><div class="calendar-nav"><button id="calendarPrev" aria-label="上个月">‹</button><strong id="calendarMonth"></strong><button id="calendarNext" aria-label="下个月">›</button></div><div class="calendar-weekdays" aria-hidden="true"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div><div class="calendar-grid" id="historyCalendar"></div></div>
+              <div class="day-detail"><div class="day-detail-head"><div><h3 id="historyDateTitle">日期记录</h3><p id="historyDateSummary">选择日期查看训练或比赛情况</p></div><span class="pill" id="historyRecordCount">0 条</span></div><div class="day-activity-list" id="historyDayList"></div></div>
             </div>
-            <article class="card"><div class="card-body"><div class="card-header"><div><h2>训练—比赛闭环</h2><p>把赛场上暴露的问题，变成下一次训练内容</p></div></div><div class="flow"><div class="flow-step"><b>比赛记录</b><small>左脚停球 2 次失误</small></div><div class="flow-arrow">→</div><div class="flow-step"><b>转为训练目标</b><small>弱势脚第一脚触球</small></div><div class="flow-arrow">→</div><div class="flow-step"><b>加入今日计划</b><small>墙传 + 开放身体</small></div></div></div></article>
           </div>
-          <div class="stack">
-            <article class="card"><div class="card-body"><div class="card-header"><div><h2>观赛提醒</h2><p id="homeReminderSummary">主队默认开启提醒</p></div><button class="btn primary small" id="homeAddFollowedTeam">＋ 关注球队</button></div><div class="watch-list" id="homeReminderList"><div class="watch-empty">设置主队后，下一场比赛会显示在这里。</div></div><p class="data-source-note">Football data provided by the <a href="https://www.football-data.org/" target="_blank" rel="noreferrer">Football-Data.org API</a></p></div></article>
-            <article class="card"><div class="card-body"><div class="card-header"><div><h2>下一场比赛</h2><p>9 月 20 日 · 20:00</p></div><span class="pill">7v7</span></div><div class="scoreboard" style="margin:12px 0 20px"><div class="team"><div class="team-badge">法</div><strong>法学院</strong></div><div class="score" style="font-size:1rem;color:var(--muted)">VS</div><div class="team"><div class="team-badge" style="background:rgba(255,107,80,.12)">经</div><strong>经管学院</strong></div></div><button class="btn ghost" style="width:100%" data-screen="matches">查看比赛准备</button></div></article>
-            <article class="card"><div class="card-body"><div class="card-header"><div><h2>近期动态</h2><p>训练与比赛统一时间线</p></div></div><div class="timeline" id="homeTimeline"><div class="event"><div class="date-tile"><b>11</b><small>SEP</small></div><div><strong>双人传接球 · 48 分钟</strong><p>完成 6 个动作 · RPE 7</p></div><span class="pill">训练</span></div><div class="event"><div class="date-tile"><b>07</b><small>SEP</small></div><div><strong>法学院 3 : 2 建筑学院</strong><p>CM · 1 进球 · 1 助攻</p></div><span class="pill">比赛</span></div><div class="event"><div class="date-tile"><b>05</b><small>SEP</small></div><div><strong>个人控球 · 35 分钟</strong><p>弱势脚完成度 82%</p></div><span class="pill">训练</span></div></div></div></article>
+          <div class="home-insight-panel" data-home-panel="stats">
+            <div class="tabs stats-periods" role="tablist" aria-label="统计周期"><button class="tab active" data-stats-period="week" aria-selected="true">近 7 天</button><button class="tab" data-stats-period="month" aria-selected="false">本月</button><button class="tab" data-stats-period="custom" aria-selected="false">自定义</button></div>
+            <div class="custom-stats-range hidden" id="customStatsRange"><label for="customStatsStart">开始日期<input id="customStatsStart" type="date"></label><label for="customStatsEnd">结束日期<input id="customStatsEnd" type="date"></label><button class="btn primary" id="applyCustomStats">统计</button></div>
+            <div class="stats-summary"><div class="stats-metrics" id="statsMetrics"></div><div class="stats-volume"><div class="stats-volume-head"><strong>累计运动时间</strong><span id="statsPeriodLabel"></span></div><div class="volume-row"><span>训练</span><div class="volume-track"><div class="volume-fill" id="trainingVolumeBar"></div></div><b id="trainingVolumeValue">0 分钟</b></div><div class="volume-row"><span>比赛</span><div class="volume-track"><div class="volume-fill match" id="matchVolumeBar"></div></div><b id="matchVolumeValue">0 分钟</b></div></div></div>
           </div>
+          </div></article>
         </div>
       </section>
 
       <section class="screen" id="screen-training">
-        <div class="section-head"><div><h2 class="section-title">训练中心</h2><p>告诉我今天实际有什么，马上得到一节能落地的训练。</p></div><div class="tabs" role="tablist" data-tabgroup="training"><button class="tab active" data-tab="plan">快速训练</button><button class="tab" data-tab="library">动作库</button><button class="tab" data-tab="history">历史</button></div></div>
-        <div class="tab-panel active" data-panel="plan">
+        <div class="section-head"><div><h2 class="section-title">训练</h2></div><div class="tabs" role="tablist" data-tabgroup="training"><button class="tab active" data-tab="quick">快速训练</button><button class="tab" data-tab="custom">自定义训练</button><button class="tab" data-tab="plan">训练计划</button></div></div>
+        <div class="tab-panel active" data-panel="quick">
           <div class="training-builder">
             <article class="card builder-card">
               <h2>现在能怎么练？</h2><p>按到场后的真实情况选择，计划会避开用不上的器材和人数。</p>
@@ -518,25 +653,48 @@
             </article>
           </div>
         </div>
-        <div class="tab-panel" data-panel="library">
-          <article class="card"><div class="card-body"><div class="card-header"><div><h2>动作库</h2><p id="filterSummary">全部人数 · 全部时长 · 12 个动作</p></div><button class="btn primary small" id="autoPlan">智能组合训练</button></div><div class="filters" id="peopleFilters"><button class="filter-btn active" data-filter="all">全部</button><button class="filter-btn" data-filter="1">单人</button><button class="filter-btn" data-filter="2">2 人</button><button class="filter-btn" data-filter="3">3–4 人</button><button class="filter-btn" data-filter="5">5–8 人</button></div><div class="library-grid" id="drillLibrary"></div></div></article>
+        <div class="tab-panel" data-panel="custom">
+          <article class="card"><div class="card-body"><div class="card-header"><div><h2>从训练库选择动作</h2><p id="filterSummary">按训练类型和人数筛选</p></div></div><div class="library-filters"><div class="library-filter-row"><b>训练类型</b><div class="filters" id="categoryFilters" style="margin:0"><button class="filter-btn active" data-library-category="all">全部</button><button class="filter-btn" data-library-category="ball">有球技术</button><button class="filter-btn" data-library-category="fitness">体能</button></div></div><div class="library-filter-row"><b>适用人数</b><div class="filters" id="peopleFilters" style="margin:0"><button class="filter-btn active" data-library-people="all">全部</button><button class="filter-btn" data-library-people="1">单人</button><button class="filter-btn" data-library-people="2">2 人</button><button class="filter-btn" data-library-people="3">3–4 人</button><button class="filter-btn" data-library-people="5">5–8 人</button></div></div><div class="library-filter-row"><b>筛选逻辑</b><div class="filters" id="filterLogic" style="margin:0"><button class="filter-btn active" data-filter-logic="any">满足任一条件</button><button class="filter-btn" data-filter-logic="all">同时满足</button></div></div><p class="library-filter-note">“满足任一条件”会保留符合训练类型或人数其中一项的动作；也可以切换为同时满足。</p></div><div class="custom-plan-bar"><div><strong id="customPlanCount">尚未选择动作</strong><span id="customPlanDuration">从下方训练库添加</span></div><button class="btn primary" id="startCustomWorkout">开始自定义训练</button></div><div class="plan-list" id="customSelectedList" style="margin-bottom:18px"></div><div class="library-grid" id="drillLibrary"></div></div></article>
         </div>
-        <div class="tab-panel" data-panel="history"><article class="card"><div class="card-body"><div class="card-header"><div><h2>训练历史</h2><p>共 28 次 · 21 小时 36 分钟</p></div><span class="pill">9 月</span></div><div class="history-list" id="trainingHistory"><div class="history-item"><div class="history-icon">✓</div><div><strong>双人传接球</strong><p>9 月 11 日 · 48 分钟 · 6 个动作</p></div><span class="pill">RPE 7</span></div><div class="history-item"><div class="history-icon">✓</div><div><strong>个人控球</strong><p>9 月 5 日 · 35 分钟 · 4 个动作</p></div><span class="pill">RPE 6</span></div><div class="history-item"><div class="history-icon">✓</div><div><strong>射门与爆发力</strong><p>9 月 2 日 · 66 分钟 · 7 个动作</p></div><span class="pill">RPE 8</span></div></div></div></article></div>
+        <div class="tab-panel" data-panel="plan"><article class="card"><div class="card-body"><span class="pill">待开发</span><h2 style="margin:12px 0 8px">训练计划</h2><p style="margin:0;color:var(--muted)">后续将支持按周安排训练、设置周期目标，并把计划同步到首页“今日计划”。内测期间可先使用快速训练和自定义训练。</p></div></article></div>
       </section>
 
       <section class="screen" id="screen-matches">
-        <div class="section-head"><div><h2 class="section-title">比赛中心</h2><p>赛前准备、个人表现与赛后反思放在同一条记录里。</p></div><button class="btn primary" id="recordMatch">＋ 记录比赛</button></div>
-        <div class="matches-grid"><div class="stack"><article class="card match-feature"><div class="card-header"><div><span class="pill live">最近一场</span><h2 style="margin-top:10px">9 月 7 日 · 校园联赛</h2></div><span class="pill">7v7 · 60'</span></div><div class="scoreboard"><div class="team"><div class="team-badge">法</div><strong>法学院</strong></div><div class="score">3 : 2</div><div class="team"><div class="team-badge">建</div><strong>建筑学院</strong></div></div><div class="performance"><div class="metric"><b>CM</b><span>位置</span></div><div class="metric"><b>1</b><span>进球</span></div><div class="metric"><b>1</b><span>助攻</span></div><div class="metric"><b>7.8</b><span>自评分</span></div></div><div class="note-block"><b>做得好</b><p>接球前观察明显增加，能更早发现弱侧空间。</p></div><div class="note-block bad"><b>下次改进</b><p>左脚第一脚触球容易停在身体下方，已转入训练计划。</p></div></article><article class="card"><div class="card-body"><div class="card-header"><div><h2>个人表现趋势</h2><p>最近 5 场自评</p></div></div><div style="height:190px;display:flex;align-items:flex-end;gap:12px;padding:10px 8px 24px;border-bottom:1px solid var(--line)"><div style="height:58%;flex:1;background:#325b4b;border-radius:8px 8px 2px 2px" title="6.4"></div><div style="height:66%;flex:1;background:#3e725d;border-radius:8px 8px 2px 2px" title="6.8"></div><div style="height:72%;flex:1;background:#579d79;border-radius:8px 8px 2px 2px" title="7.2"></div><div style="height:69%;flex:1;background:#6dbd8f;border-radius:8px 8px 2px 2px" title="7.0"></div><div style="height:82%;flex:1;background:var(--lime);border-radius:8px 8px 2px 2px" title="7.8"></div></div></div></article></div><aside class="stack"><article class="card"><div class="card-body"><div class="card-header"><div><h2>接下来</h2><p>赛程与准备</p></div></div><div class="schedule-list" id="scheduleList"><div class="schedule"><div class="schedule-date"><b>20</b><small>9 月</small></div><div><strong>vs 经管学院</strong><p>20:00 · 东区 2 号场 · 7v7</p></div><span class="pill live">7 天</span></div><div class="schedule"><div class="schedule-date"><b>28</b><small>9 月</small></div><div><strong>vs 信息学院</strong><p>18:30 · 西区球场 · 7v7</p></div><span class="pill">15 天</span></div></div></div></article><article class="card"><div class="card-body"><div class="card-header"><div><h2>本季数据</h2><p>校园联赛 · 2026 秋</p></div></div><div class="mini-stats" style="grid-template-columns:repeat(2,1fr)"><div class="stat"><span>出场</span><strong id="matchCount">6</strong></div><div class="stat"><span>进球</span><strong id="goalCount">3</strong></div><div class="stat"><span>助攻</span><strong id="assistCount">4</strong></div><div class="stat"><span>场均评分</span><strong>7.2</strong></div></div></div></article></aside></div>
+        <div class="section-head"><div><h2 class="section-title">比赛中心</h2></div><button class="btn primary" id="recordMatch">＋ 添加比赛</button></div>
+        <div class="matches-grid"><div class="stack"><article class="card match-feature"><div class="card-header"><div><span class="pill live">最近一场</span><h2 style="margin-top:10px">9 月 7 日 · 校园联赛</h2></div><span class="pill">7v7 · 60'</span></div><div class="scoreboard"><div class="team"><div class="team-badge">法</div><strong>法学院</strong></div><div class="score">3 : 2</div><div class="team"><div class="team-badge">建</div><strong>建筑学院</strong></div></div><div class="performance"><div class="metric"><b>CM</b><span>位置</span></div><div class="metric"><b>1</b><span>进球</span></div><div class="metric"><b>1</b><span>助攻</span></div><div class="metric"><b>7.8</b><span>自评分</span></div></div><div class="note-block"><b>做得好</b><p>接球前观察明显增加，能更早发现弱侧空间。</p></div><div class="note-block bad"><b>下次改进</b><p>左脚第一脚触球容易停在身体下方，已转入训练计划。</p></div></article><article class="card"><div class="card-body"><div class="card-header"><div><h2>个人表现趋势</h2><p>最近 5 场自评</p></div></div><div style="height:190px;display:flex;align-items:flex-end;gap:12px;padding:10px 8px 24px;border-bottom:1px solid var(--line)"><div style="height:58%;flex:1;background:#325b4b;border-radius:8px 8px 2px 2px" title="6.4"></div><div style="height:66%;flex:1;background:#3e725d;border-radius:8px 8px 2px 2px" title="6.8"></div><div style="height:72%;flex:1;background:#579d79;border-radius:8px 8px 2px 2px" title="7.2"></div><div style="height:69%;flex:1;background:#6dbd8f;border-radius:8px 8px 2px 2px" title="7.0"></div><div style="height:82%;flex:1;background:var(--lime);border-radius:8px 8px 2px 2px" title="7.8"></div></div></div></article></div><aside class="stack"><article class="card"><div class="card-body"><div class="card-header"><div><h2>接下来</h2><p>赛程与准备</p></div></div><div class="schedule-list" id="scheduleList"><div class="schedule" data-scheduled-match data-id="schedule-20260920-business" data-opponent="经管学院" data-date="2026-09-20" data-competition="校园联赛" data-format="7v7" data-time="20:00" data-venue="东区 2 号场"><div class="schedule-date"><b>20</b><small>9 月</small></div><div><strong>vs 经管学院</strong><p>20:00 · 东区 2 号场 · 7v7</p></div><span class="pill live">7 天</span></div><div class="schedule" data-scheduled-match data-id="schedule-20260928-information" data-opponent="信息学院" data-date="2026-09-28" data-competition="校园联赛" data-format="7v7" data-time="18:30" data-venue="西区球场"><div class="schedule-date"><b>28</b><small>9 月</small></div><div><strong>vs 信息学院</strong><p>18:30 · 西区球场 · 7v7</p></div><span class="pill">15 天</span></div></div></div></article><article class="card"><div class="card-body"><div class="card-header"><div><h2>已结束比赛</h2><p>比分与赛况记录</p></div></div><div class="history-list" id="matchHistoryList"><div class="history-item"><div class="history-icon">终</div><div><strong>法学院 3 : 2 建筑学院</strong><p>9 月 7 日 · 校园联赛 · 先失球后反超</p></div><span class="pill">已结束</span></div></div></div></article><article class="card"><div class="card-body"><div class="card-header"><div><h2>本季数据</h2><p>校园联赛 · 2026 秋</p></div></div><div class="mini-stats" style="grid-template-columns:repeat(2,1fr)"><div class="stat"><span>出场</span><strong id="matchCount">6</strong></div><div class="stat"><span>进球</span><strong id="goalCount">3</strong></div><div class="stat"><span>助攻</span><strong id="assistCount">4</strong></div><div class="stat"><span>场均评分</span><strong>7.2</strong></div></div></div></article></aside></div>
       </section>
 
       <section class="screen" id="screen-tactics">
-        <div class="section-head"><div><h2 class="section-title">战术工作台</h2><p>阵型模板、拖拽编辑与关键帧动画，共用训练动作的 Pitch Engine。</p></div><div class="button-row"><button class="btn ghost small" id="resetPitch">重置</button><button class="btn primary small" id="playFrames">▶ 播放动画</button></div></div>
-        <div class="tactics-layout"><aside class="card tool-panel"><h3>比赛设置</h3><span class="control-label">人数</span><div class="segmented" id="sizeChooser"><button class="segment" data-size="5">5v5</button><button class="segment active" data-size="7">7v7</button><button class="segment" data-size="8">8v8</button><button class="segment" data-size="11">11v11</button></div><span class="control-label">阵型模板</span><div class="formation-grid" id="formationChooser"><button class="formation active" data-form="231">2–3–1</button><button class="formation" data-form="321">3–2–1</button><button class="formation" data-form="312">3–1–2</button><button class="formation" data-form="custom">自由</button></div><span class="control-label">绘制工具</span><div class="tool-grid" id="toolChooser"><button class="tool active" data-tool="select"><span>↖</span>选择 / 拖拽</button><button class="tool" data-tool="pass"><span>→</span>传球箭头</button><button class="tool" data-tool="run"><span>⇢</span>跑动路线</button><button class="tool" data-tool="zone"><span>▧</span>区域</button></div><div class="player-editor hidden" id="playerEditor"><label for="playerNameInput" id="playerEditorLabel">球员名称</label><div class="player-editor-row"><input id="playerNameInput" maxlength="12" placeholder="输入姓名或昵称"><button class="btn primary small" id="savePlayerName">保存</button></div><div class="player-editor-actions"><button id="clearPlayerName">恢复默认名称</button><button id="selectNextPlayer">选择下一位 →</button></div></div><div class="hint">在“选择 / 拖拽”模式下，点一下球员可改名；拖动可调整位置。绘制路线时依次点起点和终点。</div></aside><article class="card pitch-card"><div class="pitch-head"><strong id="pitchTitle">7v7 · 2–3–1 进攻组织</strong><span id="toolStatus">当前：选择 / 拖拽</span></div><div id="tacticPitch" aria-label="可交互足球战术板"><div class="field"></div><div class="halfway"></div><div class="center-circle"></div><div class="box top"></div><div class="box bottom"></div></div></article><aside class="card frames-panel"><div class="card-header"><div><h3>关键帧</h3><p>保存位置后创建下一步</p></div><button class="btn small" id="addFrame">＋</button></div><div class="frame-list" id="frameList"></div><div class="button-row" style="margin-top:14px"><button class="btn primary" style="width:100%" id="playFrames2">▶ 播放全部</button></div></aside></div>
-        <div class="card architecture"><div class="engine-block"><b>训练动作</b><small>人数、器材、站位、示范动画</small></div><div class="engine-core">统一<br>Pitch Engine</div><div class="engine-block"><b>比赛战术</b><small>阵型、路线、区域、关键帧</small></div></div>
+        <div class="section-head"><div><h2 class="section-title">战术</h2></div><div class="tabs tactics-mode-tabs" id="tacticsModeTabs"><button class="tab active" data-tactics-mode="lineup">首发阵容</button><button class="tab" data-tactics-mode="rehearsal">战术预演</button></div></div>
+        <div class="tactics-layout">
+          <aside class="card tool-panel">
+            <h3 id="tacticPanelTitle">首发设置</h3>
+            <span class="control-label">比赛人数</span>
+            <div class="segmented" id="sizeChooser"><button class="segment" data-size="5">5v5</button><button class="segment active" data-size="7">7v7</button><button class="segment" data-size="8">8v8</button><button class="segment" data-size="11">11v11</button></div>
+            <span class="control-label">阵型模板</span>
+            <div class="formation-grid" id="formationChooser"></div>
+            <div id="lineupControls">
+              <div class="player-editor hidden" id="playerEditor"><label for="playerNumberInput" id="playerEditorLabel">球员号码和名称</label><div class="player-editor-row"><input id="playerNumberInput" maxlength="2" inputmode="numeric" aria-label="球员号码" placeholder="号码"><input id="playerNameInput" maxlength="12" aria-label="球员名称" placeholder="输入姓名或昵称"><button class="btn primary small" id="savePlayerName">保存</button></div><div class="player-editor-actions"><button id="clearPlayerName">恢复默认号码和名称</button><button id="selectNextPlayer">选择下一位 →</button></div></div>
+              <div class="hint">直接拖动球员排序；点一下球员可修改号码和名称。完成后可导出整张阵容图。</div>
+              <div class="button-row" style="margin-top:10px"><button class="btn ghost" id="resetLineup">恢复阵型</button><button class="btn primary" id="saveMatchLineup">保存首发阵容</button><button class="btn ghost" id="exportLineup">导出 PNG</button></div>
+            </div>
+            <div class="hidden" id="rehearsalControls">
+              <span class="control-label">绘制工具</span>
+              <div class="tool-grid" id="toolChooser"><button class="tool active" data-tool="select"><span>↖</span>移动球员</button><button class="tool" data-tool="pass"><span>→</span>传球</button><button class="tool" data-tool="run"><span>⇢</span>跑位</button><button class="tool" data-tool="zone"><span>▧</span>区域</button></div>
+              <div class="draw-status" id="drawStatus">拖动球员或足球，调整当前站位。</div>
+              <div class="draw-actions"><button class="btn ghost" id="undoDrawing">撤销绘制</button><button class="btn ghost" id="clearDrawings">清空绘制</button></div>
+              <div class="hint">手机操作：选择“传球 / 跑位 / 区域”后，先点起点，再点终点；点球员可直接作为起点。</div>
+              <div class="button-row" style="margin-top:10px"><button class="btn ghost" id="resetPitch">重置战术板</button><button class="btn primary" id="saveMatchRehearsal">保存战术预演</button></div>
+            </div>
+          </aside>
+          <article class="card pitch-card"><div class="pitch-head"><strong id="pitchTitle">7v7 · 2–3–1 首发阵容</strong><span id="toolStatus">拖动球员排序</span></div><div id="tacticPitch" aria-label="可交互足球战术板"><div class="field"></div><div class="halfway"></div><div class="center-circle"></div><div class="box top"></div><div class="box bottom"></div></div></article>
+          <aside class="card lineup-panel" id="lineupPanel"><div class="card-header"><div><h3>首发名单</h3><p id="lineupSaveStatus">点选球员后可修改号码和名称</p></div></div><div class="lineup-list" id="lineupList"></div><div class="button-row" style="margin-top:14px"><button class="btn primary" style="flex:1" id="saveMatchLineup2">保存本场首发</button><button class="btn ghost" style="flex:1" id="exportLineup2">导出阵容图</button></div></aside>
+          <aside class="card frames-panel hidden" id="framesPanel"><div class="card-header"><div><h3>关键帧</h3><p>移动球员后保存下一步</p></div><button class="btn small" id="addFrame">＋ 保存</button></div><div class="frame-list" id="frameList"></div><div class="button-row" style="margin-top:14px"><button class="btn primary" style="width:100%" id="playFrames2">▶ 播放预演</button></div></aside>
+        </div>
       </section>
 
       <section class="screen" id="screen-profile">
-        <article class="card account-strip"><div class="account-avatar" id="accountAvatar">访</div><div class="account-copy"><span class="pill">账号</span><h2 id="accountTitle">尚未登录</h2><p id="accountSubtitle">登录后可在未来同步球员档案、主队和照片墙</p></div><div class="account-actions"><button class="btn primary" id="loginAccount">登录 / 注册</button><button class="btn ghost hidden" id="logoutAccount">退出登录</button></div></article>
+        <article class="card account-strip"><div class="account-avatar" id="accountAvatar">访</div><div class="account-copy"><span class="pill">账号与云端</span><h2 id="accountTitle">尚未登录</h2><p id="accountSubtitle">使用 ChatGPT 账号登录后，可跨设备保存个人数据和照片</p></div><div class="account-actions"><button class="btn primary" id="loginAccount">使用 ChatGPT 登录</button><button class="btn ghost hidden" id="logoutAccount">退出登录</button></div></article>
         <div class="profile-grid">
           <article class="card profile-card"><div class="card-body"><div class="profile-ball" id="profileJersey">7</div><h2 id="profileHeadline">中场 · 足球爱好者</h2><p id="profileSubline">右脚 · 主要位置 CM / DM</p><div class="profile-lines"><div class="profile-line"><span>累计训练</span><b>21 小时 36 分</b></div><div class="profile-line"><span>比赛</span><b>6 场</b></div><div class="profile-line"><span>本季目标</span><b id="profileGoal">弱势脚 + 体能</b></div><div class="profile-line"><span>常用赛制</span><b id="profileFormat">7v7</b></div></div><button class="btn ghost" style="width:100%;margin-top:14px" id="editPlayerProfile">编辑球员档案</button></div></article>
           <div class="profile-main">
@@ -554,7 +712,7 @@
   </div>
 
   <nav class="mobile-nav" aria-label="移动端主导航">
-    <button class="nav-btn active" data-screen="home"><span class="nav-icon">⌂</span>首页</button><button class="nav-btn" data-screen="training"><span class="nav-icon">◴</span>训练</button><button class="nav-btn" data-screen="matches"><span class="nav-icon">⚽</span>比赛</button><button class="nav-btn" data-screen="tactics"><span class="nav-icon">↗</span>战术</button><button class="nav-btn" data-screen="profile"><span class="nav-icon">◎</span>我的</button>
+    <button class="nav-btn active" data-screen="home"><span class="nav-icon">⌂</span>首页</button><button class="nav-btn" data-screen="training"><span class="nav-icon">◴</span>训练</button><button class="nav-btn" data-screen="matches"><span class="nav-icon"><svg class="siu-player" viewBox="0 0 24 24" aria-hidden="true"><g class="siu-idle"><circle cx="12" cy="4" r="2"></circle><path d="M12 6.5v7.5M12 9l-4 3M12 9l4 3M12 14l-3 6M12 14l3 6"></path></g><g class="siu-pose"><circle cx="12" cy="4" r="2"></circle><path d="M12 6.5v7.5M12 9L5 6M12 9l7-3M12 14l-5 6M12 14l5 6"></path></g></svg></span>比赛</button><button class="nav-btn" data-screen="tactics"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M12 4v16"></path><circle cx="12" cy="12" r="3"></circle><circle cx="7" cy="9" r="1" fill="currentColor" stroke="none"></circle><circle cx="17" cy="15" r="1" fill="currentColor" stroke="none"></circle></svg></span>战术</button><button class="nav-btn" data-screen="profile"><span class="nav-icon">◎</span>我的</button>
   </nav>
 
   <div class="modal-backdrop" id="workoutModal" role="dialog" aria-modal="true" aria-label="训练执行">
@@ -564,26 +722,55 @@
       <section id="finishScreen" class="hidden"><span class="pill live">训练结束</span><h3 class="prep-title">这节训练，身体感觉怎么样？</h3><p class="prep-copy">留下一个主观强度和一句话，下次排计划会更准。</p><div class="rpe-grid"><button class="rpe" data-rpe="4">4<br><small>轻松</small></button><button class="rpe" data-rpe="5">5<br><small>适中</small></button><button class="rpe active" data-rpe="6">6<br><small>有效</small></button><button class="rpe" data-rpe="7">7<br><small>较累</small></button><button class="rpe" data-rpe="8">8<br><small>很累</small></button></div><div class="field"><label for="sessionNote">一句训练笔记（可选）</label><textarea id="sessionNote" placeholder="例如：左脚接球时身体还是容易关上。"></textarea></div><div class="button-row" style="justify-content:flex-end;margin-top:16px"><button class="btn primary" id="saveSession">保存到训练历史</button></div></section>
     </div></div>
   </div>
-  <div class="modal-backdrop" id="matchModal" role="dialog" aria-modal="true" aria-label="记录比赛"><div class="modal wide"><div class="modal-head"><h2>记录一场比赛</h2><button class="close" data-close="matchModal">×</button></div><form class="modal-body" id="matchForm"><div class="form-grid"><div class="field"><label for="opponent">对手</label><input id="opponent" name="opponent" value="经管学院" required></div><div class="field"><label for="matchDate">日期</label><input id="matchDate" name="date" type="date" value="2026-09-13" required></div><div class="field"><label for="position">位置</label><select id="position" name="position"><option>CM</option><option>DM</option><option>AM</option><option>边后卫</option><option>前锋</option></select></div><div class="field"><label for="minutes">出场时间</label><input id="minutes" name="minutes" type="number" value="60" min="0"></div><div class="field"><label for="goals">进球</label><input id="goals" name="goals" type="number" value="0" min="0"></div><div class="field"><label for="assists">助攻</label><input id="assists" name="assists" type="number" value="1" min="0"></div><div class="field full"><label for="goodNote">做得好的</label><textarea id="goodNote" name="good">接球前观察更主动，转身选择更清楚。</textarea></div><div class="field full"><label for="improveNote">需要改进</label><textarea id="improveNote" name="improve">高强度下弱势脚第一脚触球不稳定。</textarea></div></div><div class="button-row" style="justify-content:flex-end;margin-top:18px"><button type="button" class="btn ghost" data-close="matchModal">取消</button><button type="submit" class="btn primary">保存比赛记录</button></div></form></div></div>
+  <div class="modal-backdrop" id="matchModal" role="dialog" aria-modal="true" aria-label="添加比赛"><div class="modal wide"><div class="modal-head"><div><h2 id="matchModalTitle">添加未来比赛</h2><p class="prep-copy" id="matchModalCopy">先记下开球时间和场地，比赛结束后再补充比分与赛况。</p></div><button class="close" data-close="matchModal">×</button></div><form class="modal-body" id="matchForm"><input id="matchType" name="type" type="hidden" value="future"><div class="segmented" id="matchTypeChooser" style="margin-bottom:16px"><button type="button" class="segment active" data-match-type="future" aria-pressed="true">未来赛程</button><button type="button" class="segment" data-match-type="completed" aria-pressed="false">已结束比赛</button></div><div class="match-completed hidden" id="completedMatchSourceBlock"><input id="completedMatchSource" name="completedSource" type="hidden" value="scheduled"><label class="control-label">比赛来源</label><div class="segmented" id="completedSourceChooser" style="margin-bottom:12px"><button type="button" class="segment active" data-completed-source="scheduled" aria-pressed="true">从已有赛程选择</button><button type="button" class="segment" data-completed-source="new" aria-pressed="false">补记未记录比赛</button></div><div class="field" id="scheduledMatchField" style="margin-bottom:16px"><label for="scheduledMatchSelect">选择之前添加的赛程</label><select id="scheduledMatchSelect" name="scheduledMatchId"></select></div></div><div class="form-grid"><div class="field"><label for="opponent">对手</label><input id="opponent" name="opponent" placeholder="例如：经管学院" required></div><div class="field"><label for="matchDate">比赛日期</label><input id="matchDate" name="date" type="date" required></div><div class="field"><label for="competition">赛事</label><input id="competition" name="competition" value="校园联赛" placeholder="例如：校园联赛"></div><div class="field"><label for="matchFormat">赛制</label><select id="matchFormat" name="format"><option>5v5</option><option selected>7v7</option><option>8v8</option><option>11v11</option></select></div><div class="field match-future"><label for="kickoffTime">开球时间</label><input id="kickoffTime" name="time" type="time" value="20:00" required></div><div class="field match-future"><label for="matchVenue">场地</label><input id="matchVenue" name="venue" placeholder="例如：东区 2 号场"></div><div class="field full match-future"><label for="prepareNote">赛前备注</label><textarea id="prepareNote" name="prepare" placeholder="集合时间、需要携带的装备或本场目标"></textarea></div><div class="field match-completed hidden"><label for="ourScore">我方比分</label><input id="ourScore" name="ourScore" type="number" min="0" value="0"></div><div class="field match-completed hidden"><label for="opponentScore">对方比分</label><input id="opponentScore" name="opponentScore" type="number" min="0" value="0"></div><div class="field full match-completed hidden"><label for="matchSummary">赛况</label><textarea id="matchSummary" name="summary" placeholder="例如：上半场先失球，下半场加强前场逼抢后完成反超。"></textarea></div><div class="field match-completed hidden"><label for="position">位置</label><select id="position" name="position"><option>CM</option><option>DM</option><option>AM</option><option>边后卫</option><option>中后卫</option><option>前锋</option><option>门将</option></select></div><div class="field match-completed hidden"><label for="minutes">出场时间</label><input id="minutes" name="minutes" type="number" value="60" min="0"></div><div class="field match-completed hidden"><label for="goals">进球</label><input id="goals" name="goals" type="number" value="0" min="0"></div><div class="field match-completed hidden"><label for="assists">助攻</label><input id="assists" name="assists" type="number" value="0" min="0"></div><div class="field full match-completed hidden"><label for="goodNote">做得好的</label><textarea id="goodNote" name="good" placeholder="本场值得保留的表现"></textarea></div><div class="field full match-completed hidden"><label for="improveNote">需要改进</label><textarea id="improveNote" name="improve" placeholder="下一次训练需要解决的问题"></textarea></div></div><div class="button-row" style="justify-content:flex-end;margin-top:18px"><button type="button" class="btn ghost" data-close="matchModal">取消</button><button type="submit" class="btn primary" id="saveMatchButton">保存未来赛程</button></div></form></div></div>
+  <div class="modal-backdrop" id="matchDetailModal" role="dialog" aria-modal="true" aria-label="比赛详细信息"><div class="modal wide"><div class="modal-head"><div><h2 id="matchDetailTitle">比赛详情</h2><p class="prep-copy" id="matchDetailSubtitle"></p></div><button class="close" data-close="matchDetailModal">×</button></div><div class="modal-body"><div class="match-detail-grid" id="matchDetailGrid"></div><div class="button-row" style="margin-bottom:16px"><button class="btn primary" id="matchLineupLink">编辑首发阵容</button><button class="btn ghost" id="matchTacticsLink">打开战术预演</button><button class="btn ghost" id="matchHistoryLink">在历史中查看</button></div><div class="field"><label for="matchMemo">比赛备忘录</label><textarea id="matchMemo" placeholder="集合安排、比赛目标、赛后复盘等"></textarea></div><div class="button-row" style="justify-content:flex-end;margin-top:10px"><button class="btn primary" id="saveMatchMemo">保存备忘录</button></div><div style="margin-top:18px"><div class="card-header"><div><h3 style="margin:0">比赛照片</h3><p>与“我的照片墙”一致，支持从设备选择照片。</p></div><button class="btn ghost small" id="addMatchPhoto">＋ 添加照片</button></div><input type="file" id="matchPhotoInput" accept="image/*" hidden><div class="match-photo-list" id="matchPhotoList"><div class="watch-empty">尚未添加比赛照片</div></div></div></div></div></div>
   <div class="modal-backdrop" id="drillModal" role="dialog" aria-modal="true" aria-label="动作详情"><div class="modal"><div class="modal-head"><h2 id="drillModalTitle">动作详情</h2><button class="close" data-close="drillModal">×</button></div><div class="modal-body" id="drillModalBody"></div></div></div>
   <div class="modal-backdrop" id="clubModal" role="dialog" aria-modal="true" aria-labelledby="clubModalTitle"><div class="modal wide"><div class="modal-head"><h2 id="clubModalTitle">选择我的主队</h2><button class="close" data-close="clubModal">×</button></div><div class="modal-body"><p class="prep-copy" id="clubModalCopy">按联赛查找当前赛季球队。这里只保存偏好，不会代表你关注或订阅球队账号。</p><div class="league-tabs" id="clubLeagueTabs" aria-label="联赛分类"></div><div class="field"><label for="clubSearch">在当前联赛搜索球队</label><input id="clubSearch" type="search" placeholder="输入球队名称"></div><div class="club-picker-meta"><span id="clubLeagueSeason"></span><span id="clubResultCount"></span></div><div class="team-options" id="teamOptions"></div><div class="field"><label for="customTeam">六个联赛之外的球队</label><input id="customTeam" placeholder="直接填写球队名称"></div><div class="button-row" style="justify-content:flex-end;margin-top:16px"><button class="btn primary" id="saveClub">确认主队</button></div></div></div></div>
-  <div class="modal-backdrop" id="accountModal" role="dialog" aria-modal="true" aria-label="登录账号"><div class="modal"><div class="modal-head"><h2>登录账号</h2><button class="close" data-close="accountModal">×</button></div><form class="modal-body" id="accountForm"><p class="prep-copy">当前为账号流程原型，资料只保存在这台设备；正式开发时再接入验证码与云端同步。</p><div class="form-grid"><div class="field"><label for="accountName">昵称</label><input id="accountName" name="name" placeholder="你的昵称" required></div><div class="field"><label for="accountContact">手机号或邮箱</label><input id="accountContact" name="contact" placeholder="用于未来登录" required></div></div><div class="button-row" style="justify-content:flex-end;margin-top:18px"><button type="submit" class="btn primary">完成登录</button></div></form></div></div>
+  <div class="modal-backdrop" id="accountModal" role="dialog" aria-modal="true" aria-label="账号信息"><div class="modal"><div class="modal-head"><h2>账号信息</h2><button class="close" data-close="accountModal">×</button></div><form class="modal-body" id="accountForm"><p class="prep-copy">账号身份由 ChatGPT 提供，个人足球数据保存到本网站的独立云端空间。</p><div class="form-grid"><div class="field"><label for="accountName">显示名称</label><input id="accountName" name="name" readonly></div><div class="field"><label for="accountContact">登录邮箱</label><input id="accountContact" name="contact" readonly></div></div><div class="button-row" style="justify-content:flex-end;margin-top:18px"><button type="button" class="btn primary" data-close="accountModal">完成</button></div></form></div></div>
   <div class="modal-backdrop" id="profileModal" role="dialog" aria-modal="true" aria-label="编辑球员档案"><div class="modal wide"><div class="modal-head"><h2>编辑球员档案</h2><button class="close" data-close="profileModal">×</button></div><form class="modal-body" id="profileForm"><div class="form-grid"><div class="field"><label for="playerNickname">球员昵称</label><input id="playerNickname" name="nickname" maxlength="20" required></div><div class="field"><label for="jerseyNumber">球衣号码</label><input id="jerseyNumber" name="jersey" maxlength="2" inputmode="numeric" required></div><div class="field"><label for="dominantFoot">惯用脚</label><select id="dominantFoot" name="foot"><option>右脚</option><option>左脚</option><option>双脚</option></select></div><div class="field"><label for="primaryPosition">主要位置</label><select id="primaryPosition" name="position"><option>门将</option><option>中后卫</option><option>边后卫</option><option>后腰</option><option>中场</option><option>前腰</option><option>边锋</option><option>前锋</option></select></div><div class="field"><label for="secondaryPosition">其他位置</label><input id="secondaryPosition" name="secondary" placeholder="例如：CM / DM"></div><div class="field"><label for="preferredFormat">常用赛制</label><select id="preferredFormat" name="format"><option>5v5</option><option selected>7v7</option><option>8v8</option><option>11v11</option></select></div><div class="field full"><label for="seasonGoal">本季目标</label><input id="seasonGoal" name="goal" placeholder="例如：提升弱势脚和体能"></div></div><div class="button-row" style="justify-content:flex-end;margin-top:18px"><button type="submit" class="btn primary">保存球员档案</button></div></form></div></div>
   <div class="modal-backdrop" id="photoMetaModal" role="dialog" aria-modal="true" aria-label="填写照片信息"><div class="modal"><div class="modal-head"><h2>记录这张照片</h2><button class="close" data-close="photoMetaModal">×</button></div><div class="modal-body"><div class="photo-media" style="border-radius:14px;margin-bottom:15px"><img id="pendingPhotoPreview" alt="待上传的足球照片" style="width:100%;height:100%;object-fit:cover"></div><div class="field"><label for="photoDate">拍摄日期</label><input id="photoDate" type="date"></div><div class="field" style="margin-top:13px"><label for="photoNote">照片备注</label><textarea id="photoNote" placeholder="例如：第一次参加校园联赛，踢满全场。"></textarea></div><div class="button-row" style="justify-content:flex-end;margin-top:18px"><button class="btn primary" id="savePhotoMeta">保存到照片墙</button></div></div></div></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
+    const weekdayNames=['周日','周一','周二','周三','周四','周五','周六'];
+    const twoDigit=value=>String(value).padStart(2,'0');
+    const cloudUser=window.__FOOTBALL_USER__||null,cloudReadyKey=cloudUser?`footballLabCloudReady:${cloudUser.id}`:'',cloudStorageKeys=['footballLabProfile','footballLabPlayerProfile','footballLabMatchDetails','footballLabPlayerNames','footballLabPlayerNumbers','footballLabMatchLineups','footballLabActivities','footballLabSchedules'];
+    const nativeStorageSet=Storage.prototype.setItem,nativeStorageRemove=Storage.prototype.removeItem;let cloudSyncTimer;
+    if(cloudUser){nativeStorageSet.call(sessionStorage,'footballLabHadCloudUser','1');}else if(sessionStorage.getItem('footballLabHadCloudUser')==='1'){cloudStorageKeys.forEach(key=>nativeStorageRemove.call(localStorage,key));nativeStorageRemove.call(sessionStorage,'footballLabHadCloudUser');}
+    function cloudSnapshot(){return Object.fromEntries(cloudStorageKeys.map(key=>[key,localStorage.getItem(key)]).filter(([,value])=>value!==null));}
+    function queueCloudSync(){if(!cloudUser||sessionStorage.getItem(cloudReadyKey)!=='1')return;clearTimeout(cloudSyncTimer);cloudSyncTimer=setTimeout(()=>fetch('/api/cloud-data',{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify(cloudSnapshot())}).then(response=>{if(!response.ok)throw new Error('sync');document.getElementById('siteNotice').dataset.synced='true';}).catch(()=>showToast('云端暂时无法同步，本机修改仍会保留')),650);}
+    Storage.prototype.setItem=function(key,value){nativeStorageSet.call(this,key,value);if(this===localStorage&&cloudStorageKeys.includes(String(key)))queueCloudSync();};Storage.prototype.removeItem=function(key){nativeStorageRemove.call(this,key);if(this===localStorage&&cloudStorageKeys.includes(String(key)))queueCloudSync();};
+    async function hydrateCloudState(){if(!cloudUser||sessionStorage.getItem(cloudReadyKey)==='1')return;try{const response=await fetch('/api/cloud-data');if(!response.ok)throw new Error('load');const data=await response.json(),state=data.state||{};cloudStorageKeys.forEach(key=>nativeStorageRemove.call(localStorage,key));Object.entries(state).forEach(([key,value])=>{if(cloudStorageKeys.includes(key)&&typeof value==='string')nativeStorageSet.call(localStorage,key,value);});nativeStorageSet.call(sessionStorage,cloudReadyKey,'1');location.reload();}catch(_){nativeStorageSet.call(sessionStorage,cloudReadyKey,'1');}}
+    hydrateCloudState();
+    const formatHomeDate=()=>{const now=new Date();return `${now.getMonth()+1} 月 ${now.getDate()} 日 · ${weekdayNames[now.getDay()]} · ${twoDigit(now.getHours())}:${twoDigit(now.getMinutes())}:${twoDigit(now.getSeconds())}`;};
+    const homeDisplayName=()=>accountPrefs.loggedIn&&accountPrefs.name.trim()?accountPrefs.name.trim():(playerProfile.nickname.trim()||'足球爱好者');
     const pageMeta = {
-      home: ['9 月 13 日 · 周日', '晚上好，今天练什么？'], training: ['TRAINING', '像健身一样执行足球训练'], matches: ['MATCHDAY', '每场比赛都留下成长线索'], tactics: ['TACTICS LAB', '把脑中的战术放到球场上'], profile: ['MY GAME', '球员档案、主队与足球记忆']
+      home: [formatHomeDate, ()=>`${homeDisplayName()}，无论今天怎么样，来吧！`], training: ['TRAINING', ''], matches: ['MATCHDAY', ''], tactics: ['TACTICS LAB', ''], profile: ['MY GAME', '球员档案、主队与足球记忆']
     };
-    document.querySelectorAll('[data-screen]').forEach(btn => btn.addEventListener('click', () => navigate(btn.dataset.screen)));
+    let currentScreen='home';
+    const resolvedPageMeta=screen=>pageMeta[screen].map(value=>typeof value==='function'?value():value);
+    function refreshPageHeader(){const [eyebrow,title]=resolvedPageMeta(currentScreen),titleElement=document.getElementById('pageTitle');document.getElementById('pageEyebrow').textContent=eyebrow;titleElement.textContent=title;titleElement.classList.toggle('hidden',!title);document.querySelector('.topbar').classList.toggle('home-centered',currentScreen==='home');}
+    function triggerSiu(button){button.classList.remove('siu');void button.offsetWidth;button.classList.add('siu');clearTimeout(button.siuTimer);button.siuTimer=setTimeout(()=>button.classList.remove('siu'),900);}
+    document.querySelectorAll('[data-screen]').forEach(btn => btn.addEventListener('click', () => {if(btn.dataset.screen==='matches'&&btn.classList.contains('nav-btn'))triggerSiu(btn);navigate(btn.dataset.screen);}));
     function navigate(screen) {
+      currentScreen=screen;
       document.querySelectorAll('.screen').forEach(el => el.classList.toggle('active', el.id === 'screen-' + screen));
       document.querySelectorAll('.nav-btn[data-screen]').forEach(el => el.classList.toggle('active', el.dataset.screen === screen));
-      document.getElementById('pageEyebrow').textContent = pageMeta[screen][0];
-      document.getElementById('pageTitle').textContent = pageMeta[screen][1];
+      refreshPageHeader();
       window.scrollTo({top:0, behavior:'smooth'});
     }
+    let homeWatchUrgent=false;
+    const daysUntilIso=value=>{if(!value)return Infinity;const [year,month,day]=String(value).slice(0,10).split('-').map(Number),target=new Date(year,month-1,day),now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate());return Math.ceil((target-today)/86400000);};
+    function updateHomePriority(){
+      const today=document.getElementById('homeTodayPlan'),next=document.getElementById('homeNextMatch'),reminder=document.getElementById('homeReminderCard'),history=document.getElementById('homeHistoryStats'),nextDays=daysUntilIso(next.dataset.matchDate),nextUrgent=nextDays>=0&&nextDays<=3;
+      next.classList.toggle('urgent',nextUrgent);reminder.classList.toggle('urgent',homeWatchUrgent);document.getElementById('homeNextUrgency').textContent=nextUrgent?`${nextDays===0?'今天':nextDays+' 天后'}开赛`:'下一场比赛';document.getElementById('homeReminderUrgency').textContent=homeWatchUrgent?'3 天内有关注比赛':'观赛提醒';
+      if(nextUrgent&&homeWatchUrgent){next.style.order='1';reminder.style.order='2';today.style.order='3';}
+      else if(nextUrgent){next.style.order='1';today.style.order='2';reminder.style.order='3';}
+      else if(homeWatchUrgent){reminder.style.order='1';today.style.order='2';next.style.order='3';}
+      else{today.style.order='1';next.style.order='2';reminder.style.order='3';}
+      history.style.order='4';
+    }
+    function selectTrainingTab(name){const target=document.querySelector(`[data-tabgroup="training"] [data-tab="${name}"]`);if(!target)return;document.querySelectorAll('[data-tabgroup="training"] .tab').forEach(x=>x.classList.toggle('active',x===target));document.querySelectorAll('#screen-training .tab-panel').forEach(x=>x.classList.toggle('active',x.dataset.panel===name));}
     document.querySelectorAll('[data-tabgroup="training"] .tab').forEach(tab => tab.addEventListener('click', () => {
       document.querySelectorAll('[data-tabgroup="training"] .tab').forEach(x => x.classList.toggle('active', x === tab));
       document.querySelectorAll('#screen-training .tab-panel').forEach(x => x.classList.toggle('active', x.dataset.panel === tab.dataset.tab));
@@ -594,6 +781,44 @@
     document.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener('click', () => closeModal(btn.dataset.close)));
     document.querySelectorAll('.modal-backdrop').forEach(bg => bg.addEventListener('click', e => { if(e.target === bg) bg.classList.remove('open'); }));
 
+    // Shared training library: quick training, today's plan and custom training all draw from here.
+    const trainingLibrary=[
+      {id:'ball-warmup',n:'带球动态热身',p:['1','2','3','5'],category:'ball',minutes:8,goal:'热身 / 球感',setup:'足球 ×1 · 标志盘 ×4'},
+      {id:'inside-outside',n:'Inside–Outside',p:['1','2','3','5'],category:'ball',minutes:8,goal:'控球 / 双脚协调',setup:'足球 ×1 · 标志盘 ×4'},
+      {id:'wall-pass',n:'双脚墙传',p:['1'],category:'ball',minutes:12,goal:'传球 / 第一脚触球',setup:'足球 ×1 · 墙面'},
+      {id:'sprint-ball',n:'20m 冲刺带球',p:['1','2','3','5'],category:'fitness',minutes:10,goal:'爆发力 / 带球',setup:'足球 ×1 · 标志盘 ×4'},
+      {id:'moving-finish',n:'移动后定点射门',p:['1'],category:'ball',minutes:14,goal:'射门 / 调整步点',setup:'足球 ×5 · 球门'},
+      {id:'dribble-gate',n:'变向带球过门',p:['1'],category:'ball',minutes:10,goal:'控球 / 变向',setup:'足球 ×1 · 标志盘 ×6'},
+      {id:'ball-shuttle',n:'带球折返间歇',p:['1','2','3','5'],category:'fitness',minutes:12,goal:'专项耐力 / 带球',setup:'足球 ×1 · 标志盘 ×4'},
+      {id:'rhythm-wall',n:'双脚节奏墙传',p:['1'],category:'ball',minutes:12,goal:'传球 / 节奏',setup:'足球 ×1 · 墙面'},
+      {id:'open-body-wall',n:'开放身体墙传接球',p:['1'],category:'ball',minutes:12,goal:'接球 / 身体朝向',setup:'足球 ×1 · 墙面'},
+      {id:'first-touch-gate',n:'六码门第一脚触球',p:['1'],category:'ball',minutes:10,goal:'第一脚触球',setup:'足球 ×1 · 标志盘 ×2'},
+      {id:'shooting-target',n:'射门落点挑战',p:['1','2'],category:'ball',minutes:12,goal:'射门 / 准确率',setup:'足球 ×5 · 球门'},
+      {id:'wall-accuracy',n:'墙传成功率',p:['1'],category:'ball',minutes:10,goal:'传球 / 准确率',setup:'足球 ×1 · 墙面'},
+      {id:'carry-gates',n:'带球穿门挑战',p:['1','2'],category:'ball',minutes:10,goal:'控球 / 准确率',setup:'足球 ×1 · 标志盘 ×6'},
+      {id:'recovery-dribble',n:'低强度带球整理',p:['1','2','3','5'],category:'fitness',minutes:8,goal:'恢复 / 球感',setup:'足球 ×1'},
+      {id:'dribble-shuttle',n:'带球折返挑战',p:['1','2','3','5'],category:'fitness',minutes:12,goal:'专项耐力',setup:'足球 ×1 · 标志盘 ×4'},
+      {id:'pair-warmup',n:'双人移动热身',p:['2'],category:'ball',minutes:8,goal:'热身 / 传接球',setup:'足球 ×2'},
+      {id:'pass-run-finish',n:'传跑后终结',p:['2','3'],category:'ball',minutes:14,goal:'传跑 / 射门',setup:'足球 ×1 · 球门'},
+      {id:'pair-first-touch',n:'双人第一脚触球',p:['2'],category:'ball',minutes:10,goal:'接球 / 身体朝向',setup:'足球 ×1 · 标志盘 ×2'},
+      {id:'moving-pass-accuracy',n:'移动传球成功率',p:['2','3'],category:'ball',minutes:12,goal:'移动传球 / 准确率',setup:'足球 ×1 · 标志盘 ×4'},
+      {id:'shield-1v1',n:'护球出区 1v1',p:['2'],category:'ball',minutes:12,goal:'护球 / 对抗',setup:'足球 ×1 · 标志盘 ×4'},
+      {id:'line-1v1',n:'带球过线 1v1',p:['2'],category:'fitness',minutes:12,goal:'对抗 / 爆发力',setup:'足球 ×1 · 标志盘 ×4'},
+      {id:'group-warmup',n:'人球动态热身',p:['3','5'],category:'ball',minutes:8,goal:'热身 / 传接球',setup:'每两人足球 ×1'},
+      {id:'triangle-pass',n:'三角传球轮转',p:['3'],category:'ball',minutes:10,goal:'传球 / 接应角度',setup:'足球 ×1 · 标志盘 ×3'},
+      {id:'directional-pass',n:'带方向接应传球',p:['3','5'],category:'ball',minutes:12,goal:'接应 / 身体朝向',setup:'足球 ×1 · 标志盘 ×6'},
+      {id:'rondo-2v1',n:'2v1 连续抢圈',p:['3'],category:'ball',minutes:12,goal:'快速出球 / 压迫',setup:'足球 ×1 · 标志盘 ×4'},
+      {id:'rondo-3v1',n:'3v1 连续抢圈',p:['5'],category:'ball',minutes:12,goal:'快速出球 / 压迫',setup:'足球 ×1 · 标志盘 ×4'},
+      {id:'rondo-4v2',n:'4v2 连续抢圈',p:['5'],category:'ball',minutes:12,goal:'快速出球 / 压迫',setup:'足球 ×1 · 标志盘 ×4'},
+      {id:'four-goal',n:'四门控球赛',p:['3','5'],category:'ball',minutes:16,goal:'控球 / 转换方向',setup:'足球 ×1 · 标志门 ×4'},
+      {id:'small-game',n:'小场攻防赛',p:['3','5'],category:'fitness',minutes:18,goal:'比赛体能 / 攻防转换',setup:'足球 ×1 · 小球门 ×2'},
+      {id:'long-pass',n:'双人长传落点',p:['2'],category:'ball',minutes:15,goal:'长传 / 移动接球',setup:'足球 ×1 · 20m 空间'},
+      {id:'wall-combination',n:'双人撞墙配合',p:['2'],category:'ball',minutes:12,goal:'二过一 / 前插',setup:'足球 ×1 · 标志盘 ×4'},
+      {id:'cross-run',n:'三人交叉跑位',p:['3'],category:'fitness',minutes:14,goal:'无球跑动 / 时机',setup:'足球 ×1 · 标志盘 ×6'},
+      {id:'build-5v3',n:'5v3 出球',p:['5'],category:'ball',minutes:18,goal:'后场组织 / 压迫',setup:'足球 ×1 · 半场'}
+    ];
+    const findTrainingAction=name=>trainingLibrary.find(item=>item.n===name);
+
     // Constraint-led training: plan for the people, time, space and equipment actually present.
     const builderState={people:'1',duration:40,space:'小空地',equipment:new Set(['足球','标志盘','墙面']),focus:'第一脚触球',readiness:'正常'};
     let currentPlan=[], timerSeconds=0, timerHandle=null, timerRunning=false, exerciseIndex=0, currentRound=1, attempts=0, successes=0, selectedRpe=6, completedExercises=0;
@@ -601,7 +826,7 @@
     const intensityLabel=()=>builderState.readiness==='轻松'?'高强度':builderState.readiness==='有点累'?'恢复强度':'正常强度';
     const allocateMinutes=total=>{const values=[Math.max(4,Math.round(total*.15)),Math.round(total*.28),Math.round(total*.34)];values.push(total-values.reduce((a,b)=>a+b,0));return values;};
     const secondsLabel=seconds=>{const mins=Math.floor(seconds/60),secs=seconds%60;return mins?(secs?`${mins}分${secs}秒`:`${mins} 分钟`):`${secs} 秒`;};
-    function exercise(name,detail,type,rounds,cue,instruction,minutes){return{name,detail,type,rounds,cue,instruction,minutes};}
+    function exercise(name,detail,type,rounds,cue,instruction,minutes){const source=findTrainingAction(name);return{name,detail,type,rounds,cue,instruction,minutes,libraryId:source?.id||''};}
     function generateTrainingPlan(silent=false){
       const m=allocateMinutes(builderState.duration), p=builderState.people, eq=builderState.equipment, focus=builderState.focus, workSets=builderState.duration<=40?3:builderState.duration<=60?4:5;
       const workSeconds=Math.max(45,Math.round(((m[1]*60-(workSets-1)*30)/workSets)/15)*15);
@@ -692,37 +917,136 @@
     document.getElementById('shortenSession').onclick=()=>finishSession();
     function finishSession(){timerRunning=false;clearInterval(timerHandle);timerHandle=null;document.getElementById('sessionModalTitle').textContent='训练小结';document.getElementById('sessionScreen').classList.add('hidden');document.getElementById('finishScreen').classList.remove('hidden');}
     document.querySelectorAll('.rpe').forEach(btn=>btn.onclick=()=>{selectedRpe=Number(btn.dataset.rpe);document.querySelectorAll('.rpe').forEach(x=>x.classList.toggle('active',x===btn));});
-    document.getElementById('saveSession').onclick=()=>{const actual=Math.max(1,Math.ceil(timerSeconds/60)),title=`${peopleLabel()}${builderState.focus}`;document.getElementById('weekSessions').textContent='4 次';document.getElementById('monthMinutes').textContent=(326+actual)+' 分';document.getElementById('trainingHistory').insertAdjacentHTML('afterbegin',`<div class="history-item"><div class="history-icon">✓</div><div><strong>${title}</strong><p>刚刚 · ${actual} 分钟 · 完成 ${completedExercises}/${currentPlan.length} 个动作</p></div><span class="pill">RPE ${selectedRpe}</span></div>`);closeModal('workoutModal');showToast('训练已保存；完成度和体感已写入历史');};
+    document.getElementById('saveSession').onclick=()=>{const actual=Math.max(1,Math.ceil(timerSeconds/60)),title=`${peopleLabel()}${builderState.focus}`;addHomeActivity({id:'training-'+Date.now(),date:localDateValue(),type:'training',title,detail:`完成 ${completedExercises}/${currentPlan.length} 个动作 · RPE ${selectedRpe}`,minutes:actual});closeModal('workoutModal');showToast('训练已保存；完成度和体感已写入历史');};
     document.querySelector('[data-close="workoutModal"]').addEventListener('click',()=>{timerRunning=false;clearInterval(timerHandle);timerHandle=null;});
-    document.getElementById('startWorkout').onclick=()=>{navigate('training');startWorkout();};document.getElementById('startWorkout2').onclick=startWorkout;
-    generateTrainingPlan(true);
+    document.getElementById('startWorkout2').onclick=startWorkout;
 
-    // Drill library rendered with the same pitch primitives used by tactics.
-    const drills=[
-      {n:'双脚墙传',p:'1',time:'12 min',goal:'传球 / 第一脚触球',setup:'足球 ×1 · 墙面 · 距离 5m'},
-      {n:'Inside–Outside',p:'1',time:'8 min',goal:'控球 / 双脚协调',setup:'足球 ×1 · 标志盘 ×4'},
-      {n:'三角传球轮转',p:'3',time:'10 min',goal:'传球 / 接应角度',setup:'足球 ×1 · 标志盘 ×3'},
-      {n:'2v1 连续攻防',p:'3',time:'12 min',goal:'决策 / 跑位',setup:'足球 ×1 · 标志盘 ×4'},
-      {n:'双人第一脚触球',p:'2',time:'10 min',goal:'接球 / 身体朝向',setup:'足球 ×1 · 标志盘 ×2'},
-      {n:'双人长传落点',p:'2',time:'15 min',goal:'长传 / 移动接球',setup:'足球 ×1 · 20m 空间'},
-      {n:'4v2 Rondo',p:'5',time:'12 min',goal:'快速出球 / 压迫',setup:'足球 ×1 · 标志盘 ×4'},
-      {n:'3v3 小球门',p:'5',time:'16 min',goal:'攻防转换 / 宽度',setup:'足球 ×1 · 小球门 ×2'},
-      {n:'20m 冲刺带球',p:'1',time:'10 min',goal:'爆发力 / 带球',setup:'足球 ×1 · 标志盘 ×4'},
-      {n:'双人撞墙配合',p:'2',time:'12 min',goal:'二过一 / 前插',setup:'足球 ×1 · 标志盘 ×4'},
-      {n:'三人交叉跑位',p:'3',time:'14 min',goal:'无球跑动 / 时机',setup:'足球 ×1 · 标志盘 ×6'},
-      {n:'5v3 出球',p:'5',time:'18 min',goal:'后场组织 / 压迫',setup:'足球 ×1 · 半场'}
-    ];
+    // Today's plan and custom training use entries from the shared library.
     const visual=(i)=>`<div class="drill-visual"><div class="pitch-lines"></div><span class="dot-player" style="left:${20+(i%3)*18}%;top:${22+(i%2)*35}%">A</span><span class="dot-player" style="left:${68-(i%2)*12}%;top:${62-(i%3)*12}%">B</span><span class="dot-ball" style="left:48%;top:48%"></span><span class="drill-arrow" style="left:34%;top:45%;width:36%;transform:rotate(${i%2?22:-18}deg)"></span></div>`;
-    function renderDrills(filter='all'){ const list=drills.filter(d=>filter==='all'||d.p===filter); document.getElementById('drillLibrary').innerHTML=list.map((d,i)=>`<button class="drill-card" data-drill="${d.n}" style="text-align:left;color:inherit">${visual(i)}<h3>${d.n}</h3><p>${d.p==='1'?'单人':d.p==='2'?'2 人':d.p==='3'?'3–4 人':'5–8 人'} · ${d.time} · ${d.goal}</p></button>`).join(''); document.getElementById('filterSummary').textContent=(filter==='all'?'全部人数':({1:'单人',2:'2 人',3:'3–4 人',5:'5–8 人'}[filter]))+' · 全部时长 · '+list.length+' 个动作'; document.querySelectorAll('[data-drill]').forEach(card=>card.onclick=()=>{const d=drills.find(x=>x.n===card.dataset.drill);document.getElementById('drillModalTitle').textContent=d.n;document.getElementById('drillModalBody').innerHTML=visual(2)+`<div class="profile-lines" style="margin-top:14px"><div class="profile-line"><span>人数</span><b>${d.p==='1'?'单人':d.p==='2'?'2 人':d.p==='3'?'3–4 人':'5–8 人'}</b></div><div class="profile-line"><span>建议时长</span><b>${d.time}</b></div><div class="profile-line"><span>训练目标</span><b>${d.goal}</b></div><div class="profile-line"><span>器材</span><b>${d.setup}</b></div></div><button class="btn primary" style="width:100%;margin-top:16px" onclick="closeModal('drillModal');showToast('动作已加入今日计划')">加入训练计划</button>`;openModal('drillModal');}); }
-    renderDrills();
-    document.querySelectorAll('#peopleFilters .filter-btn').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('#peopleFilters .filter-btn').forEach(x=>x.classList.toggle('active',x===btn));renderDrills(btn.dataset.filter);});
-    document.getElementById('autoPlan').onclick=()=>{document.querySelector('[data-tab="plan"]').click();generateTrainingPlan();};
+    const todayPlan={title:'第一脚触球 · 进阶',meta:'个人训练 · 控球 / 传球 / 爆发力',items:[{id:'ball-warmup',minutes:8,detail:'连续带球与动态拉伸'},{id:'inside-outside',minutes:15,detail:'4 × 60 秒 · 组间 30 秒'},{id:'wall-pass',minutes:20,detail:'双脚各 4 × 50 次'},{id:'sprint-ball',minutes:19,detail:'6 组 · 组间充分恢复'}]};
+    const todayPlanDuration=()=>todayPlan.items.reduce((sum,item)=>sum+item.minutes,0);
+    function todayPlanExercises(){return todayPlan.items.map(item=>{const action=trainingLibrary.find(entry=>entry.id===item.id);return exercise(action.n,item.detail,'timer',1,action.goal,'动作质量优先，感觉不稳就降低速度。',item.minutes);});}
+    function renderTodayPlan(){
+      const items=todayPlan.items.map(item=>({...item,action:trainingLibrary.find(entry=>entry.id===item.id)}));document.getElementById('homePlanTitle').textContent=todayPlan.title;document.getElementById('homePlanMeta').textContent=todayPlan.meta;document.getElementById('homePlanDuration').textContent=todayPlanDuration();document.getElementById('homePlanItems').innerHTML=items.map((item,index)=>`<div class="session-part"><span class="num">${String(index+1).padStart(2,'0')}</span><strong>${item.action.n}</strong><small>${item.minutes} 分钟</small></div>`).join('');
+    }
+    function startTodayPlanSession(){currentPlan=todayPlanExercises();startWorkout();}
+    document.getElementById('startWorkout').onclick=startTodayPlanSession;document.getElementById('viewTodayPlan').onclick=()=>{customTrainingIds=todayPlan.items.map(item=>item.id);todayPlan.items.forEach(item=>customTrainingSets[item.id]=Number(item.detail.match(/\d+(?=\s*[×组])/u)?.[0]||1));navigate('training');selectTrainingTab('custom');renderTrainingLibrary();};
+    const peopleText=values=>values.length===4?'1–8 人':values.map(value=>({1:'单人',2:'2 人',3:'3–4 人',5:'5–8 人'}[value])).join(' / ');
+    const libraryFilter={category:'all',people:'all',logic:'any'},customTrainingSets={};let customTrainingIds=[];
+    function libraryMatches(item){const checks=[];if(libraryFilter.category!=='all')checks.push(item.category===libraryFilter.category);if(libraryFilter.people!=='all')checks.push(item.p.includes(libraryFilter.people));return !checks.length||(libraryFilter.logic==='all'?checks.every(Boolean):checks.some(Boolean));}
+    function renderCustomSelection(){const selected=customTrainingIds.map(id=>trainingLibrary.find(item=>item.id===id)).filter(Boolean),minutes=selected.reduce((sum,item)=>sum+item.minutes*(customTrainingSets[item.id]||3),0);document.getElementById('customPlanCount').textContent=selected.length?`已选择 ${selected.length} 个动作`:'尚未选择动作';document.getElementById('customPlanDuration').textContent=selected.length?`预计 ${minutes} 分钟`:'从下方训练库添加';document.getElementById('startCustomWorkout').disabled=!selected.length;document.getElementById('customSelectedList').innerHTML=selected.map((item,index)=>`<div class="plan-item"><div class="order">${String(index+1).padStart(2,'0')}</div><div><strong>${item.n}</strong><p>${item.goal} · ${item.setup}</p></div><label class="set-control">组数 <input type="number" min="1" max="20" value="${customTrainingSets[item.id]||3}" data-custom-sets="${item.id}"></label><button class="btn ghost small" data-remove-custom="${item.id}">移除</button></div>`).join('');document.querySelectorAll('[data-custom-sets]').forEach(input=>input.onchange=()=>{customTrainingSets[input.dataset.customSets]=Math.max(1,Math.min(20,Number(input.value)||1));renderCustomSelection();});document.querySelectorAll('[data-remove-custom]').forEach(button=>button.onclick=()=>{customTrainingIds=customTrainingIds.filter(id=>id!==button.dataset.removeCustom);delete customTrainingSets[button.dataset.removeCustom];renderTrainingLibrary();});}
+    function renderTrainingLibrary(){const list=trainingLibrary.filter(libraryMatches);document.getElementById('filterSummary').textContent=`训练库 · ${list.length} 个动作`;document.getElementById('drillLibrary').innerHTML=list.map((item,index)=>{const selected=customTrainingIds.includes(item.id);return `<article class="drill-card ${selected?'selected':''}">${visual(index)}<h3>${item.n}</h3><p>${item.category==='ball'?'有球技术':'体能'} · ${peopleText(item.p)} · 单组约 ${item.minutes} 分钟</p><div class="drill-card-actions"><span>${item.goal}</span><button class="btn ${selected?'ghost':'primary'} small" data-toggle-drill="${item.id}">${selected?'已选择':'加入'}</button></div></article>`;}).join('');document.querySelectorAll('[data-toggle-drill]').forEach(button=>button.onclick=()=>{const id=button.dataset.toggleDrill;if(customTrainingIds.includes(id)){customTrainingIds=customTrainingIds.filter(item=>item!==id);delete customTrainingSets[id];}else{customTrainingIds.push(id);customTrainingSets[id]=3;}renderTrainingLibrary();});renderCustomSelection();}
+    document.querySelectorAll('[data-library-category]').forEach(button=>button.onclick=()=>{libraryFilter.category=button.dataset.libraryCategory;document.querySelectorAll('[data-library-category]').forEach(item=>item.classList.toggle('active',item===button));renderTrainingLibrary();});
+    document.querySelectorAll('[data-library-people]').forEach(button=>button.onclick=()=>{libraryFilter.people=button.dataset.libraryPeople;document.querySelectorAll('[data-library-people]').forEach(item=>item.classList.toggle('active',item===button));renderTrainingLibrary();});
+    document.querySelectorAll('[data-filter-logic]').forEach(button=>button.onclick=()=>{libraryFilter.logic=button.dataset.filterLogic;document.querySelectorAll('[data-filter-logic]').forEach(item=>item.classList.toggle('active',item===button));renderTrainingLibrary();});
+    document.getElementById('startCustomWorkout').onclick=()=>{const selected=customTrainingIds.map(id=>trainingLibrary.find(item=>item.id===id)).filter(Boolean);if(!selected.length){showToast('请先从训练库选择动作');return;}currentPlan=selected.map(item=>{const sets=customTrainingSets[item.id]||3;return exercise(item.n,`${sets} 组 · 每组约 ${item.minutes} 分钟 · ${item.goal}`,'timer',sets,item.goal,'按照动作说明完成，质量优先。',item.minutes*sets);});startWorkout();};
+    generateTrainingPlan(true);renderTodayPlan();renderTrainingLibrary();
 
     // Match record
-    document.getElementById('recordMatch').onclick=()=>openModal('matchModal');
-    document.getElementById('matchForm').onsubmit=(e)=>{e.preventDefault();const f=new FormData(e.target);const goals=Number(f.get('goals')),assists=Number(f.get('assists'));document.getElementById('matchCount').textContent='7';document.getElementById('goalCount').textContent=String(3+goals);document.getElementById('assistCount').textContent=String(4+assists);document.getElementById('scheduleList').insertAdjacentHTML('afterbegin',`<div class="schedule"><div class="schedule-date"><b>13</b><small>9 月</small></div><div><strong>vs ${f.get('opponent')}</strong><p>${f.get('position')} · ${f.get('minutes')} 分钟 · ${goals} 球 ${assists} 助</p></div><span class="pill live">已记录</span></div>`);closeModal('matchModal');showToast('比赛已保存，改进项可转入训练计划');};
+    const matchForm=document.getElementById('matchForm'),matchDate=document.getElementById('matchDate'),scheduledMatchSelect=document.getElementById('scheduledMatchSelect');
+    const localDateValue=()=>{const now=new Date();return `${now.getFullYear()}-${twoDigit(now.getMonth()+1)}-${twoDigit(now.getDate())}`;};
+    const safeMatchText=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+    const scheduledMatchRows=()=>[...document.querySelectorAll('#scheduleList [data-scheduled-match]')];
+    function scheduleMarkup(item){const [,month,day]=item.date.split('-').map(Number);return `<div class="schedule" data-scheduled-match data-id="${safeMatchText(item.id)}" data-opponent="${safeMatchText(item.opponent)}" data-date="${safeMatchText(item.date)}" data-competition="${safeMatchText(item.competition)}" data-format="${safeMatchText(item.format)}" data-time="${safeMatchText(item.time)}" data-venue="${safeMatchText(item.venue)}"><div class="schedule-date"><b>${day}</b><small>${month} 月</small></div><div><strong>vs ${safeMatchText(item.opponent)}</strong><p>${safeMatchText(item.time)} · ${safeMatchText(item.venue)} · ${safeMatchText(item.format)}</p></div><span class="pill live">待比赛</span></div>`;}
+    function persistSchedules(){const items=scheduledMatchRows().map(row=>({id:row.dataset.id,opponent:row.dataset.opponent,date:row.dataset.date,competition:row.dataset.competition,format:row.dataset.format,time:row.dataset.time,venue:row.dataset.venue}));try{localStorage.setItem('footballLabSchedules',JSON.stringify(items));}catch(_){}}
+    function restoreSchedules(){try{const items=JSON.parse(localStorage.getItem('footballLabSchedules')||'null');if(Array.isArray(items))document.getElementById('scheduleList').innerHTML=items.map(scheduleMarkup).join('');}catch(_){}}
+    restoreSchedules();
+    function syncHomeNextMatch(){
+      const row=scheduledMatchRows().filter(item=>item.dataset.date>=localDateValue()).sort((a,b)=>(a.dataset.date+a.dataset.time).localeCompare(b.dataset.date+b.dataset.time))[0],card=document.getElementById('homeNextMatch');
+      if(!row){card.dataset.matchDate='';document.getElementById('homeNextDate').textContent='暂无';document.getElementById('homeNextFormat').textContent='待添加';document.getElementById('homeNextOpponentMark').textContent='—';document.getElementById('homeNextOpponent').textContent='暂无未来比赛';document.getElementById('homeNextVenue').textContent='可前往比赛页添加下一场赛程';updateHomePriority();return;}
+      const [year,month,day]=row.dataset.date.split('-').map(Number),date=new Date(year,month-1,day);card.dataset.matchDate=row.dataset.date;document.getElementById('homeNextDate').textContent=`${month} 月 ${day} 日 · ${weekdayNames[date.getDay()]} ${row.dataset.time}`;document.getElementById('homeNextFormat').textContent=`${row.dataset.competition} · ${row.dataset.format}`;document.getElementById('homeNextOpponentMark').textContent=row.dataset.opponent.slice(0,2);document.getElementById('homeNextOpponent').textContent=`法学院 vs ${row.dataset.opponent}`;document.getElementById('homeNextVenue').textContent=row.dataset.venue;updateHomePriority();
+    }
+    function refreshScheduledMatchOptions(){
+      const rows=scheduledMatchRows();
+      scheduledMatchSelect.replaceChildren(...rows.map(row=>new Option(`${row.dataset.date} · vs ${row.dataset.opponent}`,row.dataset.id)));
+      return rows;
+    }
+    function fillFromScheduledMatch(id){
+      const row=scheduledMatchRows().find(item=>item.dataset.id===id);
+      if(!row)return;
+      document.getElementById('opponent').value=row.dataset.opponent;
+      matchDate.value=row.dataset.date;
+      document.getElementById('competition').value=row.dataset.competition;
+      document.getElementById('matchFormat').value=row.dataset.format;
+      document.getElementById('kickoffTime').value=row.dataset.time;
+      document.getElementById('matchVenue').value=row.dataset.venue;
+    }
+    function setCompletedSource(source,resetCommon=false){
+      const rows=refreshScheduledMatchOptions();
+      if(source==='scheduled'&&!rows.length)source='new';
+      document.getElementById('completedMatchSource').value=source;
+      document.querySelectorAll('[data-completed-source]').forEach(button=>{const active=button.dataset.completedSource===source;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));});
+      document.getElementById('scheduledMatchField').classList.toggle('hidden',source!=='scheduled');
+      scheduledMatchSelect.disabled=source!=='scheduled';
+      if(source==='scheduled'&&rows.length){scheduledMatchSelect.value=rows[0].dataset.id;fillFromScheduledMatch(scheduledMatchSelect.value);}
+      if(source==='new'&&resetCommon){document.getElementById('opponent').value='';document.getElementById('competition').value='校园联赛';document.getElementById('matchFormat').value='7v7';}
+    }
+    function setMatchMode(type,completedSource='scheduled'){
+      document.getElementById('matchType').value=type;
+      document.querySelectorAll('[data-match-type]').forEach(button=>{const active=button.dataset.matchType===type;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));});
+      document.querySelectorAll('.match-future').forEach(field=>{field.classList.toggle('hidden',type!=='future');field.querySelectorAll('input,textarea,select').forEach(input=>input.disabled=type!=='future');});
+      document.querySelectorAll('.match-completed').forEach(field=>{field.classList.toggle('hidden',type!=='completed');field.querySelectorAll('input,textarea,select').forEach(input=>input.disabled=type!=='completed');});
+      document.getElementById('matchModalTitle').textContent=type==='future'?'添加未来比赛':'补记已结束比赛';
+      document.getElementById('matchModalCopy').textContent=type==='future'?'先记下开球时间和场地，比赛结束后再补充比分与赛况。':'记录最终比分、比赛过程和自己的场上表现。';
+      document.getElementById('saveMatchButton').textContent=type==='future'?'保存未来赛程':'保存比赛记录';
+      document.getElementById('matchSummary').required=type==='completed';
+      document.getElementById('ourScore').required=type==='completed';
+      document.getElementById('opponentScore').required=type==='completed';
+      if(type==='completed')setCompletedSource(completedSource);
+    }
+    document.querySelectorAll('[data-match-type]').forEach(button=>button.onclick=()=>setMatchMode(button.dataset.matchType));
+    document.querySelectorAll('[data-completed-source]').forEach(button=>button.onclick=()=>setCompletedSource(button.dataset.completedSource,true));
+    scheduledMatchSelect.onchange=()=>fillFromScheduledMatch(scheduledMatchSelect.value);
+    matchDate.onchange=()=>setMatchMode(matchDate.value&&matchDate.value<localDateValue()?'completed':'future','new');
+    document.getElementById('recordMatch').onclick=()=>{matchForm.reset();matchDate.value=localDateValue();setMatchMode('future');openModal('matchModal');};
+    matchForm.onsubmit=e=>{
+      e.preventDefault();
+      const f=new FormData(e.target),type=String(f.get('type')),opponent=safeMatchText(f.get('opponent')),competition=safeMatchText(f.get('competition')||'普通比赛'),format=safeMatchText(f.get('format'));
+      const [,month,day]=String(f.get('date')).split('-').map(Number),monthLabel=`${month} 月`;
+      if(type==='future'){
+        const time=safeMatchText(f.get('time')),venue=safeMatchText(f.get('venue')||'场地待定'),prepare=safeMatchText(f.get('prepare')),scheduleId=`schedule-${Date.now()}`;
+        document.getElementById('scheduleList').insertAdjacentHTML('afterbegin',`<div class="schedule" data-scheduled-match data-id="${scheduleId}" data-opponent="${opponent}" data-date="${safeMatchText(f.get('date'))}" data-competition="${competition}" data-format="${format}" data-time="${time}" data-venue="${venue}"><div class="schedule-date"><b>${day}</b><small>${monthLabel}</small></div><div><strong>vs ${opponent}</strong><p>${time} · ${venue} · ${format}${prepare?` · ${prepare}`:''}</p></div><span class="pill live">待比赛</span></div>`);
+        persistSchedules();syncHomeNextMatch();decorateMatchSections();closeModal('matchModal');showToast('未来赛程已加入“下一场比赛”');return;
+      }
+      const completedSource=String(f.get('completedSource')||'new'),scheduledMatchId=String(f.get('scheduledMatchId')||''),ourScore=Number(f.get('ourScore')),opponentScore=Number(f.get('opponentScore')),goals=Number(f.get('goals')||0),assists=Number(f.get('assists')||0),summary=safeMatchText(f.get('summary'));
+      document.getElementById('matchCount').textContent=String(Number(document.getElementById('matchCount').textContent)+1);
+      document.getElementById('goalCount').textContent=String(Number(document.getElementById('goalCount').textContent)+goals);
+      document.getElementById('assistCount').textContent=String(Number(document.getElementById('assistCount').textContent)+assists);
+      document.getElementById('matchHistoryList').insertAdjacentHTML('afterbegin',`<div class="history-item"><div class="history-icon">终</div><div><strong>法学院 ${ourScore} : ${opponentScore} ${opponent}</strong><p>${month} 月 ${day} 日 · ${competition} · ${summary}</p></div><span class="pill">${format}</span></div>`);
+      const savedHistoryRow=document.querySelector('#matchHistoryList .history-item');savedHistoryRow.dataset.matchId=`match-${Date.now()}`;savedHistoryRow.dataset.date=String(f.get('date'));savedHistoryRow.dataset.opponent=String(f.get('opponent')||'').trim();savedHistoryRow.dataset.competition=String(f.get('competition')||'普通比赛');savedHistoryRow.dataset.format=String(f.get('format'));savedHistoryRow.dataset.score=`${ourScore} : ${opponentScore}`;savedHistoryRow.dataset.time=`${Number(f.get('minutes')||0)} 分钟`;savedHistoryRow.dataset.venue=String(f.get('venue')||'场地未记录');savedHistoryRow.dataset.position=String(f.get('position')||'未记录');savedHistoryRow.dataset.goals=String(goals);savedHistoryRow.dataset.assists=String(assists);savedHistoryRow.dataset.summary=String(f.get('summary')||'');
+      addHomeActivity({id:'match-'+Date.now(),date:String(f.get('date')),type:'match',title:`法学院 ${ourScore} : ${opponentScore} ${String(f.get('opponent')||'').trim()}`,detail:`${String(f.get('position')||'')} · ${Number(f.get('minutes')||0)} 分钟 · ${goals} 进球 · ${assists} 助攻`,minutes:Number(f.get('minutes')||0),goals,assists,result:ourScore>opponentScore?'win':ourScore===opponentScore?'draw':'loss'});
+      if(completedSource==='scheduled'){scheduledMatchRows().find(row=>row.dataset.id===scheduledMatchId)?.remove();persistSchedules();syncHomeNextMatch();}
+      decorateMatchSections();closeModal('matchModal');showToast('比分和赛况已保存，首页历史与统计已同步');
+    };
+    syncHomeNextMatch();
 
-    // Device-local account prototype, editable player card, team preference and photo wall.
+    // Match cards share one detail flow for lineup, tactics, photos, memos and home history.
+    const matchDetailState={activeId:'',records:{},photos:{}};let tacticsMatchLabel='',activeTacticsMatchId='',activeTacticsMatchMeta=null;
+    try{matchDetailState.records=JSON.parse(localStorage.getItem('footballLabMatchDetails')||'{}');}catch(_){}
+    function matchRecordFromElement(element){
+      if(element.matches('[data-scheduled-match]'))return{id:element.dataset.id,status:'未来比赛',opponent:element.dataset.opponent,date:element.dataset.date,competition:element.dataset.competition,format:element.dataset.format,time:element.dataset.time,venue:element.dataset.venue,score:'待比赛'};
+      return{id:element.dataset.matchId||'match-0907',status:'已结束',opponent:element.dataset.opponent||'建筑学院',date:element.dataset.date||'2026-09-07',competition:element.dataset.competition||'校园联赛',format:element.dataset.format||'7v7',time:element.dataset.time||'60 分钟',venue:element.dataset.venue||'东区球场',score:element.dataset.score||'3 : 2'};
+    }
+    function decorateMatchSections(){
+      const nextArticle=document.querySelector('#screen-matches .matches-grid > aside > article:nth-child(1)'),recent=document.querySelector('#screen-matches .match-feature'),endedArticle=document.querySelector('#screen-matches .matches-grid > aside > article:nth-child(2)'),scheduleList=document.getElementById('scheduleList');nextArticle.querySelector('h2').textContent='下一场比赛';nextArticle.querySelector('p').textContent='按开球时间排列，最近赛程优先';endedArticle.querySelector('.card-header p').textContent='全部已结束比赛';scheduledMatchRows().sort((a,b)=>(a.dataset.date+a.dataset.time).localeCompare(b.dataset.date+b.dataset.time)).forEach(row=>scheduleList.append(row));
+      scheduledMatchRows().forEach(row=>{if(!row.querySelector('[data-open-match]'))row.insertAdjacentHTML('beforeend',`<div class="match-card-actions"><button class="btn primary small" data-edit-lineup="${safeMatchText(row.dataset.id)}">首发阵容</button><button class="btn ghost small" data-open-match="${safeMatchText(row.dataset.id)}">详情</button></div>`);});
+      if(!recent.dataset.matchId){recent.dataset.matchId='match-0907';recent.dataset.opponent='建筑学院';recent.dataset.date='2026-09-07';recent.dataset.competition='校园联赛';recent.dataset.format='7v7';recent.dataset.score='3 : 2';recent.dataset.time='60 分钟';recent.dataset.venue='东区球场';recent.dataset.position='CM';recent.dataset.goals='1';recent.dataset.assists='1';}
+      if(!recent.querySelector('[data-open-match]'))recent.insertAdjacentHTML('beforeend','<div class="button-row" style="margin-top:16px"><button class="btn primary" data-open-match="match-0907">查看比赛详情</button><button class="btn ghost" data-history-match="2026-09-07">在历史中查看</button></div>');
+      document.querySelectorAll('#matchHistoryList .history-item').forEach((row,index)=>{row.dataset.matchId=row.dataset.matchId||`ended-${index}`;row.dataset.date=row.dataset.date||'2026-09-07';row.dataset.opponent=row.dataset.opponent||'建筑学院';row.dataset.competition=row.dataset.competition||'校园联赛';row.dataset.format=row.dataset.format||'7v7';row.dataset.score=row.dataset.score||'3 : 2';row.dataset.time=row.dataset.time||'60 分钟';row.dataset.venue=row.dataset.venue||'东区球场';row.dataset.position=row.dataset.position||'CM';row.dataset.goals=row.dataset.goals||'1';row.dataset.assists=row.dataset.assists||'1';const pill=row.querySelector('.pill');if(pill&&!row.querySelector('[data-open-match]'))pill.outerHTML=`<button class="btn ghost small" data-open-match="${row.dataset.matchId}">详情</button>`;});syncRecentMatch();
+    }
+    function syncRecentMatch(){const row=[...document.querySelectorAll('#matchHistoryList .history-item')].sort((a,b)=>b.dataset.date.localeCompare(a.dataset.date))[0],recent=document.querySelector('#screen-matches .match-feature');if(!row)return;['matchId','opponent','date','competition','format','score','time','venue','position','goals','assists','summary'].forEach(key=>recent.dataset[key]=row.dataset[key]||recent.dataset[key]||'');const [,month,day]=recent.dataset.date.split('-').map(Number);recent.querySelector('.card-header h2').textContent=`${month} 月 ${day} 日 · ${recent.dataset.competition}`;recent.querySelector('.card-header > .pill').textContent=`${recent.dataset.format} · ${recent.dataset.time}`;recent.querySelector('.score').textContent=recent.dataset.score;recent.querySelectorAll('.team strong')[1].textContent=recent.dataset.opponent;recent.querySelectorAll('.team-badge')[1].textContent=recent.dataset.opponent.slice(0,1);const metrics=recent.querySelectorAll('.metric b');metrics[0].textContent=recent.dataset.position;metrics[1].textContent=recent.dataset.goals;metrics[2].textContent=recent.dataset.assists;recent.querySelector('[data-open-match]').dataset.openMatch=recent.dataset.matchId;recent.querySelector('[data-history-match]').dataset.historyMatch=recent.dataset.date;}
+    function renderMatchPhotos(){const photos=matchDetailState.photos[matchDetailState.activeId]||[],target=document.getElementById('matchPhotoList');target.innerHTML=photos.length?photos.map((url,index)=>`<div style="position:relative"><img src="${url}" alt="比赛照片 ${index+1}"><button class="photo-remove" data-remove-match-photo="${index}" aria-label="移除照片">×</button></div>`).join(''):'<div class="watch-empty">尚未添加比赛照片</div>';document.querySelectorAll('[data-remove-match-photo]').forEach(button=>button.onclick=()=>{const list=matchDetailState.photos[matchDetailState.activeId]||[],index=Number(button.dataset.removeMatchPhoto);URL.revokeObjectURL(list[index]);list.splice(index,1);renderMatchPhotos();});}
+    function openMatchDetail(element){const source=matchRecordFromElement(element),saved=matchDetailState.records[source.id]||{},record={...source,...saved};matchDetailState.activeId=record.id;matchDetailState.records[record.id]=record;document.getElementById('matchDetailTitle').textContent=`法学院 vs ${record.opponent}`;document.getElementById('matchDetailSubtitle').textContent=`${record.status} · ${record.competition}`;document.getElementById('matchDetailGrid').innerHTML=[['opponent','对手',record.opponent],['date','日期',record.date],['time','时间',record.time],['venue','场地',record.venue],['format','赛制',record.format]].map(([key,label,value])=>`<label><span>${label}</span><input data-match-edit="${key}" value="${escapeHtml(value)}"></label>`).join('')+`<div><span>比分 / 状态</span><b>${escapeHtml(record.score)} · ${escapeHtml(record.status)}</b></div>`;document.getElementById('matchMemo').value=record.memo||'';document.getElementById('matchHistoryLink').classList.toggle('hidden',record.status!=='已结束');renderMatchPhotos();openModal('matchDetailModal');}
+    document.getElementById('screen-matches').addEventListener('click',event=>{const button=event.target.closest('[data-open-match],[data-history-match],[data-edit-lineup]');if(!button)return;if(button.dataset.historyMatch){openMatchInHistory(button.dataset.historyMatch);return;}const element=button.closest('[data-scheduled-match],.match-feature,.history-item');if(!element)return;if(button.dataset.editLineup){openMatchTactics(matchRecordFromElement(element),'lineup');return;}openMatchDetail(element);});
+    document.getElementById('saveMatchMemo').onclick=()=>{const record=matchDetailState.records[matchDetailState.activeId];if(!record)return;document.querySelectorAll('[data-match-edit]').forEach(input=>record[input.dataset.matchEdit]=input.value.trim());record.memo=document.getElementById('matchMemo').value.trim();document.getElementById('matchDetailTitle').textContent=`法学院 vs ${record.opponent}`;try{localStorage.setItem('footballLabMatchDetails',JSON.stringify(matchDetailState.records));}catch(_){}showToast('比赛信息和备忘录已保存');};
+    document.getElementById('addMatchPhoto').onclick=()=>document.getElementById('matchPhotoInput').click();document.getElementById('matchPhotoInput').onchange=event=>{const file=event.target.files[0];event.target.value='';if(!file||!file.type.startsWith('image/'))return;const list=matchDetailState.photos[matchDetailState.activeId]||(matchDetailState.photos[matchDetailState.activeId]=[]);list.push(URL.createObjectURL(file));renderMatchPhotos();showToast('照片已添加到本场比赛');};
+    function openMatchTactics(record,mode){activeTacticsMatchId=record.id;activeTacticsMatchMeta=record;tacticsMatchLabel=`${record.date} · 法学院 vs ${record.opponent}`;closeModal('matchDetailModal');navigate('tactics');loadMatchLineup(record);setTacticsMode(mode);showToast(mode==='lineup'?`正在修改法学院 vs ${record.opponent}的首发阵容`:'已进入本场比赛的战术预演');}
+    document.getElementById('matchLineupLink').onclick=()=>openMatchTactics(matchDetailState.records[matchDetailState.activeId],'lineup');document.getElementById('matchTacticsLink').onclick=()=>openMatchTactics(matchDetailState.records[matchDetailState.activeId],'rehearsal');
+    function openMatchInHistory(date){selectedHistoryDate=date;const parsed=parseActivityDate(date);calendarCursor=new Date(parsed.getFullYear(),parsed.getMonth(),1);navigate('home');document.querySelector('[data-home-insight="history"]').click();renderHistoryCalendar();setTimeout(()=>document.getElementById('homeHistoryStats').scrollIntoView({behavior:'smooth',block:'start'}),80);}
+    document.getElementById('matchHistoryLink').onclick=()=>{const record=matchDetailState.records[matchDetailState.activeId];if(record){closeModal('matchDetailModal');openMatchInHistory(record.date);}};
+    decorateMatchSections();
+
+    // Account-aware profile, team preference and photo wall.
     const clubLeagues=[
       {id:'premier',name:'英超',season:'2026/27',clubs:[['阿森纳','ARS'],['阿斯顿维拉','AVL'],['伯恩茅斯','BOU'],['布伦特福德','BRE'],['布莱顿','BHA'],['切尔西','CHE'],['考文垂','COV'],['水晶宫','CRY'],['埃弗顿','EVE'],['富勒姆','FUL'],['赫尔城','HUL'],['伊普斯维奇','IPS'],['利兹联','LEE'],['利物浦','LIV'],['曼城','MCI'],['曼联','MUN'],['纽卡斯尔联','NEW'],['诺丁汉森林','NFO'],['桑德兰','SUN'],['托特纳姆热刺','TOT']]},
       {id:'laliga',name:'西甲',season:'2026/27',clubs:[['毕尔巴鄂竞技','ATH'],['马德里竞技','ATM'],['奥萨苏纳','OSA'],['塞尔塔','CEL'],['阿拉维斯','ALA'],['埃尔切','ELC'],['巴塞罗那','BAR'],['赫塔费','GET'],['莱万特','LEV'],['马拉加','MAL'],['桑坦德竞技','RAC'],['巴列卡诺','RAY'],['拉科鲁尼亚','DEP'],['西班牙人','ESP'],['皇家贝蒂斯','BET'],['皇家马德里','RMA'],['皇家社会','RSO'],['塞维利亚','SEV'],['瓦伦西亚','VAL'],['比利亚雷亚尔','VIL']]},
@@ -737,18 +1061,17 @@
     const findClub=name=>{for(const league of clubLeagues){const club=leagueClubs(league).find(item=>item.name===name);if(club)return{league,club};const fallback=league.clubs.find(item=>item[0]===name);if(fallback)return{league,club:{name:fallback[0],mark:fallback[1],providerId:null}};}return null;};
     const defaultPlayerProfile={nickname:'足球爱好者',jersey:'7',foot:'右脚',position:'中场',secondary:'CM / DM',goal:'弱势脚 + 体能',format:'7v7'};
     let selectedTeamCandidate='', selectedTeamProviderId=null, activeClubLeague='premier', clubPickerMode='main', photoItems=[], pendingPhotoUrl='', pendingPhotoFile=null;
-    let profilePrefs={club:'',league:'',providerTeamId:null,reminder:false,lead:'30',mainReminderDefaulted:false,followedTeams:[]},accountPrefs={loggedIn:false,name:'',contact:''},playerProfile={...defaultPlayerProfile};
+    let profilePrefs={club:'',league:'',providerTeamId:null,reminder:false,lead:'30',mainReminderDefaulted:false,followedTeams:[]},accountPrefs=cloudUser?{loggedIn:true,name:cloudUser.name,contact:cloudUser.email}:{loggedIn:false,name:'',contact:''},playerProfile={...defaultPlayerProfile};
     try{profilePrefs={...profilePrefs,...JSON.parse(localStorage.getItem('footballLabProfile')||'{}')};}catch(_){}
-    try{accountPrefs={...accountPrefs,...JSON.parse(localStorage.getItem('footballLabAccount')||'{}')};}catch(_){}
     try{playerProfile={...playerProfile,...JSON.parse(localStorage.getItem('footballLabPlayerProfile')||'{}')};}catch(_){}
     function saveProfilePrefs(){try{localStorage.setItem('footballLabProfile',JSON.stringify(profilePrefs));}catch(_){}}
     if(!Array.isArray(profilePrefs.followedTeams))profilePrefs.followedTeams=[];
     if(profilePrefs.club&&!profilePrefs.mainReminderDefaulted){profilePrefs.reminder=true;profilePrefs.mainReminderDefaulted=true;saveProfilePrefs();}
-    function renderAccount(){const logged=accountPrefs.loggedIn;document.getElementById('accountAvatar').textContent=logged?(accountPrefs.name.trim()[0]||'我'):'访';document.getElementById('accountTitle').textContent=logged?accountPrefs.name:'尚未登录';document.getElementById('accountSubtitle').textContent=logged?accountPrefs.contact+' · 资料保存在当前设备':'登录后可在未来同步球员档案、主队和照片墙';document.getElementById('loginAccount').classList.toggle('hidden',logged);document.getElementById('logoutAccount').classList.toggle('hidden',!logged);}
-    document.getElementById('loginAccount').onclick=()=>{document.getElementById('accountName').value=accountPrefs.name;document.getElementById('accountContact').value=accountPrefs.contact;openModal('accountModal');};
-    document.getElementById('accountForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);accountPrefs={loggedIn:true,name:String(f.get('name')).trim(),contact:String(f.get('contact')).trim()};try{localStorage.setItem('footballLabAccount',JSON.stringify(accountPrefs));}catch(_){}renderAccount();closeModal('accountModal');showToast('登录状态已保存到当前设备');};
-    document.getElementById('logoutAccount').onclick=()=>{accountPrefs={loggedIn:false,name:'',contact:''};try{localStorage.removeItem('footballLabAccount');}catch(_){}renderAccount();showToast('已退出当前设备上的账号');};
-    function renderPlayerProfile(){document.getElementById('profileJersey').textContent=playerProfile.jersey;document.querySelector('.avatar').textContent=playerProfile.jersey;document.getElementById('profileHeadline').textContent=playerProfile.position+' · '+playerProfile.nickname;document.getElementById('profileSubline').textContent=playerProfile.foot+' · 主要位置 '+(playerProfile.secondary||playerProfile.position);document.getElementById('profileGoal').textContent=playerProfile.goal||'暂未设置';document.getElementById('profileFormat').textContent=playerProfile.format;}
+    function renderAccount(){const logged=Boolean(cloudUser);document.getElementById('accountAvatar').textContent=logged?(accountPrefs.name.trim()[0]||'我'):'访';document.getElementById('accountTitle').textContent=logged?accountPrefs.name:'尚未登录';document.getElementById('accountSubtitle').textContent=logged?`${accountPrefs.contact} · 云端同步已开启`:'登录后可跨设备保存档案、训练、比赛、阵容和照片';document.getElementById('loginAccount').classList.toggle('hidden',logged);document.getElementById('logoutAccount').classList.toggle('hidden',!logged);document.getElementById('siteNotice').innerHTML=logged?'<strong>网站通知</strong>：公开内测期间功能会持续调整。你的结构化数据和照片已启用云端保存；观赛提醒暂不发送系统推送。':'<strong>网站通知</strong>：当前为公开内测版。登录后可跨设备保存个人档案、训练、比赛、阵容和照片；未登录时数据仅保存在当前设备。';if(currentScreen==='home')refreshPageHeader();}
+    document.getElementById('loginAccount').onclick=()=>{location.href='/signin-with-chatgpt?return_to=/';};
+    document.getElementById('accountForm').onsubmit=e=>e.preventDefault();
+    document.getElementById('logoutAccount').onclick=()=>{location.href='/signout-with-chatgpt?return_to=/';};
+    function renderPlayerProfile(){document.getElementById('profileJersey').textContent=playerProfile.jersey;document.querySelector('.avatar').textContent=playerProfile.jersey;document.getElementById('profileHeadline').textContent=playerProfile.position+' · '+playerProfile.nickname;document.getElementById('profileSubline').textContent=playerProfile.foot+' · 主要位置 '+(playerProfile.secondary||playerProfile.position);document.getElementById('profileGoal').textContent=playerProfile.goal||'暂未设置';document.getElementById('profileFormat').textContent=playerProfile.format;if(currentScreen==='home')refreshPageHeader();}
     document.getElementById('editPlayerProfile').onclick=()=>{document.getElementById('playerNickname').value=playerProfile.nickname;document.getElementById('jerseyNumber').value=playerProfile.jersey;document.getElementById('dominantFoot').value=playerProfile.foot;document.getElementById('primaryPosition').value=playerProfile.position;document.getElementById('secondaryPosition').value=playerProfile.secondary;document.getElementById('preferredFormat').value=playerProfile.format;document.getElementById('seasonGoal').value=playerProfile.goal;openModal('profileModal');};
     document.getElementById('profileForm').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),jersey=String(f.get('jersey')).trim();if(!/^\d{1,2}$/.test(jersey)){showToast('球衣号码请输入 0–99');return;}playerProfile={nickname:String(f.get('nickname')).trim(),jersey,foot:String(f.get('foot')),position:String(f.get('position')),secondary:String(f.get('secondary')).trim(),goal:String(f.get('goal')).trim(),format:String(f.get('format'))};try{localStorage.setItem('footballLabPlayerProfile',JSON.stringify(playerProfile));}catch(_){}renderPlayerProfile();closeModal('profileModal');showToast('球员档案已更新');};
     function renderReminder(){
@@ -779,14 +1102,17 @@
       const known=findClub(team.club),mark=known?known.club.mark:team.club.slice(0,2),leagueName=known?known.league.name:(team.league||'其他联赛'),enabled=Boolean(team.reminder),key=team.main?'main':'follow:'+team.index;
       return `<div class="watch-team ${team.main?'main':''}"><div class="watch-team-mark">${escapeHtml(mark)}</div><div class="watch-team-copy"><b>${escapeHtml(team.club)}${team.main?' · 主队':''}</b><small data-watch-match="${escapeHtml(teamIdentity(team))}">${escapeHtml(leagueName)} · ${team.providerTeamId?'正在读取下一场…':'暂不提供实时赛程'}</small></div><div class="watch-team-actions"><button class="switch ${enabled?'on':''}" data-watch-toggle="${key}" role="switch" aria-checked="${enabled}">${enabled?'提醒中':'未提醒'}</button>${allowRemove&&!team.main?`<button class="watch-remove" data-watch-remove="${team.index}" aria-label="取消关注 ${escapeHtml(team.club)}">×</button>`:''}</div></div>`;
     }
+    let reminderRenderToken=0;
     function renderReminderCenter(){
+      const renderToken=++reminderRenderToken;
       const teams=reminderTeams(),enabled=teams.filter(team=>team.reminder).length,home=document.getElementById('homeReminderList'),profile=document.getElementById('profileFollowedTeams'),followed=teams.filter(team=>!team.main);
+      homeWatchUrgent=false;updateHomePriority();
       document.getElementById('homeReminderSummary').textContent=teams.length?enabled+' 支球队已开启提醒':'主队默认开启提醒';
       home.innerHTML=teams.length?teams.map(team=>watchTeamMarkup(team,true)).join(''):'<div class="watch-empty">设置主队后，下一场比赛会显示在这里。</div>';
       profile.innerHTML=followed.length?followed.map(team=>watchTeamMarkup(team,true)).join(''):'<div class="watch-empty">还没有关注其他球队。</div>';
       document.querySelectorAll('[data-watch-toggle]').forEach(button=>button.onclick=()=>{const key=button.dataset.watchToggle;if(key==='main')profilePrefs.reminder=!profilePrefs.reminder;else{const index=Number(key.split(':')[1]);if(profilePrefs.followedTeams[index])profilePrefs.followedTeams[index].reminder=!profilePrefs.followedTeams[index].reminder;}saveProfilePrefs();renderReminder();renderReminderCenter();showToast('观赛提醒设置已保存');});
       document.querySelectorAll('[data-watch-remove]').forEach(button=>button.onclick=()=>{const index=Number(button.dataset.watchRemove),team=profilePrefs.followedTeams[index];if(!team)return;profilePrefs.followedTeams.splice(index,1);saveProfilePrefs();renderReminderCenter();showToast('已取消关注 '+team.club);});
-      teams.filter(team=>team.providerTeamId).forEach(async team=>{const match=await getNextMatch(team.providerTeamId),text=reminderMatchText(team,match);document.querySelectorAll(`[data-watch-match="${CSS.escape(teamIdentity(team))}"]`).forEach(node=>node.textContent=text);});
+      Promise.all(teams.filter(team=>team.providerTeamId).map(async team=>{const match=await getNextMatch(team.providerTeamId),text=reminderMatchText(team,match);document.querySelectorAll(`[data-watch-match="${CSS.escape(teamIdentity(team))}"]`).forEach(node=>node.textContent=text);return Boolean(team.reminder&&match?.utcDate&&daysUntilIso(match.utcDate)>=0&&daysUntilIso(match.utcDate)<=3);})).then(results=>{if(renderToken!==reminderRenderToken)return;homeWatchUrgent=results.some(Boolean);updateHomePriority();});
     }
     async function loadNextMatch(teamId,leagueName){
       const target=document.getElementById('clubNextMatch');target.textContent=leagueName+' · 正在读取下一场比赛…';const match=await getNextMatch(teamId);target.textContent=match===undefined?leagueName+' · 赛程数据暂时不可用':match===null?leagueName+' · 暂无已公布的下一场比赛':reminderMatchText({providerTeamId:teamId},match);
@@ -829,44 +1155,139 @@
     document.getElementById('reminderToggle').onclick=()=>{profilePrefs.reminder=!profilePrefs.reminder;saveProfilePrefs();renderReminder();renderReminderCenter();showToast(profilePrefs.reminder?'主队观赛提醒已开启':'主队观赛提醒已关闭');};
     document.getElementById('reminderLead').onchange=e=>{profilePrefs.lead=e.target.value;saveProfilePrefs();renderReminderCenter();showToast('提醒时间已保存');};
     const escapeHtml=value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
+
+    // Home history calendar and period statistics share the same activity records.
+    const defaultHomeActivities=[
+      {id:'training-0902',date:'2026-09-02',type:'training',title:'射门与爆发力',detail:'7 个动作 · RPE 8',minutes:66},
+      {id:'training-0905',date:'2026-09-05',type:'training',title:'个人控球',detail:'4 个动作 · RPE 6',minutes:35},
+      {id:'match-0907',date:'2026-09-07',type:'match',title:'法学院 3 : 2 建筑学院',detail:'CM · 60 分钟 · 1 进球 · 1 助攻',minutes:60,goals:1,assists:1,result:'win'},
+      {id:'training-0909',date:'2026-09-09',type:'training',title:'耐力与变速跑',detail:'5 个动作 · RPE 7',minutes:80},
+      {id:'training-0911',date:'2026-09-11',type:'training',title:'双人传接球',detail:'6 个动作 · RPE 7',minutes:48},
+      {id:'training-0914',date:'2026-09-14',type:'training',title:'弱势脚第一触球',detail:'5 个动作 · RPE 6',minutes:55},
+      {id:'training-0915',date:'2026-09-15',type:'training',title:'小空间控球',detail:'4 个动作 · RPE 6',minutes:42},
+      {id:'training-0826',date:'2026-08-26',type:'training',title:'墙传与转身',detail:'5 个动作 · RPE 7',minutes:52},
+      {id:'match-0822',date:'2026-08-22',type:'match',title:'法学院 1 : 1 新闻学院',detail:'DM · 70 分钟 · 0 进球 · 1 助攻',minutes:70,goals:0,assists:1,result:'draw'},
+      {id:'training-0812',date:'2026-08-12',type:'training',title:'速度与折返',detail:'6 个动作 · RPE 8',minutes:60},
+      {id:'training-0730',date:'2026-07-30',type:'training',title:'个人射门',detail:'5 个动作 · RPE 7',minutes:50},
+      {id:'match-0720',date:'2026-07-20',type:'match',title:'法学院 2 : 0 外国语学院',detail:'CM · 60 分钟 · 1 进球 · 0 助攻',minutes:60,goals:1,assists:0,result:'win'}
+    ];
+    let homeActivities=defaultHomeActivities;try{const savedActivities=JSON.parse(localStorage.getItem('footballLabActivities')||'null');if(Array.isArray(savedActivities))homeActivities=savedActivities;}catch(_){}
+    const parseActivityDate=value=>{const [year,month,day]=value.split('-').map(Number);return new Date(year,month-1,day);};
+    const activityDateKey=date=>`${date.getFullYear()}-${twoDigit(date.getMonth()+1)}-${twoDigit(date.getDate())}`;
+    const latestActivity=homeActivities.filter(item=>parseActivityDate(item.date)<=new Date()).sort((a,b)=>b.date.localeCompare(a.date))[0];
+    let calendarCursor=latestActivity?new Date(parseActivityDate(latestActivity.date).getFullYear(),parseActivityDate(latestActivity.date).getMonth(),1):new Date(new Date().getFullYear(),new Date().getMonth(),1);
+    let selectedHistoryDate=latestActivity?.date||localDateValue(),statsPeriod='week';
+    function renderHistoryDay(){
+      const date=parseActivityDate(selectedHistoryDate),records=homeActivities.filter(item=>item.date===selectedHistoryDate);
+      document.getElementById('historyDateTitle').textContent=`${date.getMonth()+1} 月 ${date.getDate()} 日 · ${weekdayNames[date.getDay()]}`;
+      document.getElementById('historyDateSummary').textContent=records.length?'当天的训练与比赛记录':'当天没有训练或比赛记录';
+      document.getElementById('historyRecordCount').textContent=`${records.length} 条`;
+      document.getElementById('historyDayList').innerHTML=records.length?records.map(item=>`<article class="day-activity ${item.type}" ${item.type==='match'?`data-home-match="${item.date}"`:''}><div class="activity-type">${item.type==='training'?'训':'赛'}</div><div><strong>${escapeHtml(item.title)}</strong><p>${item.type==='training'?`${item.minutes} 分钟 · `:''}${escapeHtml(item.detail)}</p></div>${item.type==='match'?'<button class="btn ghost small">查看比赛</button>':`<span class="pill">训练</span>`}</article>`).join(''):'<div class="history-empty">选择带有颜色标记的日期，可查看当天的训练或比赛情况。</div>';
+      document.querySelectorAll('[data-home-match]').forEach(card=>card.onclick=()=>{navigate('matches');const target=[...document.querySelectorAll('#screen-matches [data-date]')].find(item=>item.dataset.date===card.dataset.homeMatch)||document.querySelector('#screen-matches .match-feature');target?.querySelector('[data-open-match]')?.click();});
+    }
+    function renderHistoryCalendar(){
+      const year=calendarCursor.getFullYear(),month=calendarCursor.getMonth(),days=new Date(year,month+1,0).getDate(),offset=(new Date(year,month,1).getDay()+6)%7;
+      document.getElementById('calendarMonth').textContent=`${year} 年 ${month+1} 月`;
+      const cells=Array.from({length:offset},()=>'<span class="calendar-empty" aria-hidden="true"></span>');
+      for(let day=1;day<=days;day++){
+        const key=`${year}-${twoDigit(month+1)}-${twoDigit(day)}`,records=homeActivities.filter(item=>item.date===key),types=[...new Set(records.map(item=>item.type))],typeClasses=types.map(type=>`has-${type}`).join(' ');
+        cells.push(`<button class="calendar-day ${typeClasses} ${key===localDateValue()?'today':''} ${key===selectedHistoryDate?'selected':''}" data-history-date="${key}" aria-label="${month+1}月${day}日，${records.length}条记录"><span class="calendar-number">${day}</span></button>`);
+      }
+      document.getElementById('historyCalendar').innerHTML=cells.join('');
+      document.querySelectorAll('[data-history-date]').forEach(button=>button.onclick=()=>{selectedHistoryDate=button.dataset.historyDate;renderHistoryCalendar();renderHistoryDay();});
+      renderHistoryDay();
+    }
+    function statsRange(period){
+      const end=new Date(),start=new Date(end.getFullYear(),end.getMonth(),end.getDate());
+      if(period==='week')start.setDate(start.getDate()-6);
+      if(period==='month')start.setDate(1);
+      if(period==='custom'){
+        const startValue=document.getElementById('customStatsStart').value,endValue=document.getElementById('customStatsEnd').value;
+        if(startValue&&endValue){const customStart=parseActivityDate(startValue),customEnd=parseActivityDate(endValue);return {start:customStart,end:customEnd,label:`${customStart.getFullYear()}/${customStart.getMonth()+1}/${customStart.getDate()}—${customEnd.getFullYear()}/${customEnd.getMonth()+1}/${customEnd.getDate()}`};}
+      }
+      return {start,end,label:period==='week'?`${start.getMonth()+1}/${start.getDate()}—${end.getMonth()+1}/${end.getDate()}`:`${end.getFullYear()} 年 ${end.getMonth()+1} 月`};
+    }
+    function renderHomeStats(){
+      const range=statsRange(statsPeriod),records=homeActivities.filter(item=>{const date=parseActivityDate(item.date);return date>=range.start&&date<=range.end;}),trainings=records.filter(item=>item.type==='training'),matches=records.filter(item=>item.type==='match'),trainingMinutes=trainings.reduce((sum,item)=>sum+item.minutes,0),matchMinutes=matches.reduce((sum,item)=>sum+item.minutes,0),goals=matches.reduce((sum,item)=>sum+(item.goals||0),0),assists=matches.reduce((sum,item)=>sum+(item.assists||0),0),maxMinutes=Math.max(trainingMinutes,matchMinutes,1);
+      const metrics=[['训练次数',`${trainings.length} 次`],['累计训练量',`${trainingMinutes} 分钟`],['比赛场次',`${matches.length} 场`],['进球',`${goals} 个`],['助攻',`${assists} 次`],['比赛时间',`${matchMinutes} 分钟`]];
+      document.getElementById('statsMetrics').innerHTML=metrics.map(([label,value])=>`<div class="stats-metric"><span>${label}</span><strong>${value}</strong></div>`).join('');
+      document.getElementById('statsPeriodLabel').textContent=range.label;
+      document.getElementById('trainingVolumeBar').style.width=`${trainingMinutes/maxMinutes*100}%`;
+      document.getElementById('matchVolumeBar').style.width=`${matchMinutes/maxMinutes*100}%`;
+      document.getElementById('trainingVolumeValue').textContent=`${trainingMinutes} 分钟`;
+      document.getElementById('matchVolumeValue').textContent=`${matchMinutes} 分钟`;
+    }
+    function addHomeActivity(activity){homeActivities.push(activity);try{localStorage.setItem('footballLabActivities',JSON.stringify(homeActivities));}catch(_){}selectedHistoryDate=activity.date;const date=parseActivityDate(activity.date);calendarCursor=new Date(date.getFullYear(),date.getMonth(),1);renderHistoryCalendar();renderHomeStats();}
+    document.getElementById('calendarPrev').onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()-1,1);renderHistoryCalendar();};
+    document.getElementById('calendarNext').onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+1,1);renderHistoryCalendar();};
+    document.querySelectorAll('[data-home-insight]').forEach(button=>button.onclick=()=>{document.querySelectorAll('[data-home-insight]').forEach(item=>{const active=item===button;item.classList.toggle('active',active);item.setAttribute('aria-selected',String(active));});document.querySelectorAll('[data-home-panel]').forEach(panel=>panel.classList.toggle('active',panel.dataset.homePanel===button.dataset.homeInsight));});
+    const customStatsEndDate=new Date(),customStatsStartDate=new Date();customStatsStartDate.setDate(customStatsStartDate.getDate()-29);document.getElementById('customStatsStart').value=activityDateKey(customStatsStartDate);document.getElementById('customStatsEnd').value=activityDateKey(customStatsEndDate);
+    document.querySelectorAll('[data-stats-period]').forEach(button=>button.onclick=()=>{statsPeriod=button.dataset.statsPeriod;document.querySelectorAll('[data-stats-period]').forEach(item=>{const active=item===button;item.classList.toggle('active',active);item.setAttribute('aria-selected',String(active));});document.getElementById('customStatsRange').classList.toggle('hidden',statsPeriod!=='custom');renderHomeStats();});
+    document.getElementById('applyCustomStats').onclick=()=>{const start=document.getElementById('customStatsStart').value,end=document.getElementById('customStatsEnd').value;if(!start||!end){showToast('请选择完整的开始和结束日期');return;}if(start>end){showToast('开始日期不能晚于结束日期');return;}renderHomeStats();};
+    renderHistoryCalendar();renderHomeStats();
+
     const formatPhotoDate=value=>new Date(value+'T00:00:00').toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric'});
     const openPhotoDb=()=>new Promise((resolve,reject)=>{const request=indexedDB.open('footballLabMedia',1);request.onupgradeneeded=()=>request.result.createObjectStore('photos',{keyPath:'id',autoIncrement:true});request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
-    async function loadStoredPhotos(){try{const db=await openPhotoDb(),request=db.transaction('photos','readonly').objectStore('photos').getAll();request.onsuccess=()=>{photoItems.forEach(item=>URL.revokeObjectURL(item.url));photoItems=request.result.sort((a,b)=>b.createdAt-a.createdAt).map(item=>({...item,url:URL.createObjectURL(item.blob)}));renderPhotoWall();db.close();};}catch(_){renderPhotoWall();}}
-    async function deleteStoredPhoto(id){if(!id)return;try{const db=await openPhotoDb();db.transaction('photos','readwrite').objectStore('photos').delete(id);db.close();}catch(_){}}
-    function renderPhotoWall(){const wall=document.getElementById('photoWall');if(!photoItems.length){wall.innerHTML='<div class="photo-empty"><div><b>从第一张足球照片开始</b><span>选择照片后，再填写拍摄日期和备注。</span></div></div>';return;}wall.innerHTML=photoItems.map((item,i)=>`<article class="photo-tile"><div class="photo-media"><img src="${item.url}" alt="足球照片 ${i+1}"></div><button class="photo-remove" data-remove-photo="${i}" aria-label="移除第 ${i+1} 张照片">×</button><div class="photo-meta"><time datetime="${item.date}">${formatPhotoDate(item.date)}</time><p>${escapeHtml(item.note)||'未填写备注'}</p></div></article>`).join('');document.querySelectorAll('[data-remove-photo]').forEach(btn=>btn.onclick=async()=>{const index=Number(btn.dataset.removePhoto),item=photoItems[index];await deleteStoredPhoto(item.id);URL.revokeObjectURL(item.url);photoItems.splice(index,1);renderPhotoWall();showToast('照片已从照片墙移除');});}
+    async function loadStoredPhotos(){if(cloudUser){try{const response=await fetch('/api/cloud-photos');if(!response.ok)throw new Error('photos');const data=await response.json();photoItems=data.photos||[];renderPhotoWall();return;}catch(_){showToast('云端照片暂时无法读取');renderPhotoWall();return;}}try{const db=await openPhotoDb(),request=db.transaction('photos','readonly').objectStore('photos').getAll();request.onsuccess=()=>{photoItems.forEach(item=>{if(item.local)URL.revokeObjectURL(item.url);});photoItems=request.result.sort((a,b)=>b.createdAt-a.createdAt).map(item=>({...item,local:true,url:URL.createObjectURL(item.blob)}));renderPhotoWall();db.close();};}catch(_){renderPhotoWall();}}
+    async function deleteStoredPhoto(id){if(!id)return;if(cloudUser){const response=await fetch('/api/cloud-photos?id='+encodeURIComponent(id),{method:'DELETE'});if(!response.ok)throw new Error('delete');return;}try{const db=await openPhotoDb();db.transaction('photos','readwrite').objectStore('photos').delete(id);db.close();}catch(_){}}
+    function renderPhotoWall(){const wall=document.getElementById('photoWall');if(!photoItems.length){wall.innerHTML='<div class="photo-empty"><div><b>从第一张足球照片开始</b><span>选择照片后，再填写拍摄日期和备注。</span></div></div>';return;}wall.innerHTML=photoItems.map((item,i)=>`<article class="photo-tile"><div class="photo-media"><img src="${item.url}" alt="足球照片 ${i+1}"></div><button class="photo-remove" data-remove-photo="${i}" aria-label="移除第 ${i+1} 张照片">×</button><div class="photo-meta"><time datetime="${item.date}">${formatPhotoDate(item.date)}</time><p>${escapeHtml(item.note)||'未填写备注'}</p></div></article>`).join('');document.querySelectorAll('[data-remove-photo]').forEach(btn=>btn.onclick=async()=>{const index=Number(btn.dataset.removePhoto),item=photoItems[index];try{await deleteStoredPhoto(item.id);if(item.local)URL.revokeObjectURL(item.url);photoItems.splice(index,1);renderPhotoWall();showToast('照片已从照片墙移除');}catch(_){showToast('照片删除失败，请稍后重试');}});}
     document.getElementById('addPhotos').onclick=()=>document.getElementById('photoInput').click();
     document.getElementById('photoInput').onchange=e=>{const file=e.target.files[0];e.target.value='';if(!file||!file.type.startsWith('image/'))return;if(photoItems.length>=6){showToast('照片墙最多可保存 6 张照片');return;}if(pendingPhotoUrl)URL.revokeObjectURL(pendingPhotoUrl);pendingPhotoFile=file;pendingPhotoUrl=URL.createObjectURL(file);document.getElementById('pendingPhotoPreview').src=pendingPhotoUrl;document.getElementById('photoDate').value=new Date().toISOString().slice(0,10);document.getElementById('photoNote').value='';openModal('photoMetaModal');};
-    document.getElementById('savePhotoMeta').onclick=async()=>{const date=document.getElementById('photoDate').value,note=document.getElementById('photoNote').value.trim();if(!pendingPhotoFile||!date){showToast('请先选择照片并填写日期');return;}try{const db=await openPhotoDb(),request=db.transaction('photos','readwrite').objectStore('photos').add({blob:pendingPhotoFile,date,note,createdAt:Date.now()});request.onsuccess=()=>{photoItems.unshift({id:request.result,url:pendingPhotoUrl,date,note});pendingPhotoUrl='';pendingPhotoFile=null;renderPhotoWall();closeModal('photoMetaModal');showToast('照片、日期和备注已保存到当前设备');db.close();};}catch(_){photoItems.unshift({url:pendingPhotoUrl,date,note});pendingPhotoUrl='';pendingPhotoFile=null;renderPhotoWall();closeModal('photoMetaModal');showToast('照片已加入本次浏览的照片墙');}};
+    document.getElementById('savePhotoMeta').onclick=async()=>{const date=document.getElementById('photoDate').value,note=document.getElementById('photoNote').value.trim();if(!pendingPhotoFile||!date){showToast('请先选择照片并填写日期');return;}if(cloudUser){try{const form=new FormData();form.append('file',pendingPhotoFile);form.append('date',date);form.append('note',note);const response=await fetch('/api/cloud-photos',{method:'POST',body:form}),data=await response.json();if(!response.ok)throw new Error(data.error||'upload');URL.revokeObjectURL(pendingPhotoUrl);photoItems.unshift(data.photo);pendingPhotoUrl='';pendingPhotoFile=null;renderPhotoWall();closeModal('photoMetaModal');showToast('照片已保存到云端');return;}catch(error){showToast(error instanceof Error?error.message:'照片上传失败');return;}}try{const db=await openPhotoDb(),request=db.transaction('photos','readwrite').objectStore('photos').add({blob:pendingPhotoFile,date,note,createdAt:Date.now()});request.onsuccess=()=>{photoItems.unshift({id:request.result,url:pendingPhotoUrl,date,note,local:true});pendingPhotoUrl='';pendingPhotoFile=null;renderPhotoWall();closeModal('photoMetaModal');showToast('照片已保存在当前设备');db.close();};}catch(_){showToast('照片保存失败，请稍后重试');}};
     document.querySelector('[data-close="photoMetaModal"]').addEventListener('click',()=>{if(pendingPhotoUrl){URL.revokeObjectURL(pendingPhotoUrl);pendingPhotoUrl='';pendingPhotoFile=null;}});
     renderAccount();renderPlayerProfile();renderClub();loadStoredPhotos();
+    setInterval(()=>{if(currentScreen==='home')refreshPageHeader();},1000);
 
-    // Unified tactical pitch engine
-    const pitch=document.getElementById('tacticPitch'); let teamSize=7, activeTool='select', drawStart=null, dragTarget=null, frames=[], activeFrame=0, selectedPlayer=null;
+    // Lineup builder and mobile-friendly tactical rehearsal share one pitch.
+    const pitch=document.getElementById('tacticPitch'),tacticsScreen=document.getElementById('screen-tactics');
+    let teamSize=7,activeFormation='231',tacticsMode='lineup',activeTool='select',drawStart=null,drawOriginElement=null,dragTarget=null,frames=[],activeFrame=0,selectedPlayer=null;
     let playerNames={};try{playerNames=JSON.parse(localStorage.getItem('footballLabPlayerNames')||'{}');}catch(_){playerNames={};}
-    const layouts={5:[[50,88],[28,66],[72,66],[50,42],[50,8]],7:[[50,91],[30,72],[70,72],[20,50],[50,54],[80,50],[50,22]],8:[[50,91],[22,72],[50,76],[78,72],[28,50],[72,50],[50,30],[50,8]],11:[[50,94],[15,78],[38,82],[62,82],[85,78],[24,58],[50,62],[76,58],[18,34],[50,25],[82,34]]};
-    const defaultPlayerCode=(i,opp=false)=>opp?'O'+(i+1):i===teamSize-1?'ST':i===0?'GK':String(i+1);
+    let playerNumbers={},matchLineups={};try{playerNumbers=JSON.parse(localStorage.getItem('footballLabPlayerNumbers')||'{}');}catch(_){playerNumbers={};}try{matchLineups=JSON.parse(localStorage.getItem('footballLabMatchLineups')||'{}');}catch(_){matchLineups={};}
+    const formationPresets={
+      5:[{id:'121',label:'1–2–1',positions:[[50,92],[50,70],[28,48],[72,48],[50,18]]},{id:'211',label:'2–1–1',positions:[[50,92],[30,72],[70,72],[50,46],[50,18]]},{id:'custom',label:'自由',positions:null}],
+      7:[{id:'231',label:'2–3–1',positions:[[50,92],[30,72],[70,72],[20,50],[50,54],[80,50],[50,20]]},{id:'321',label:'3–2–1',positions:[[50,92],[22,74],[50,78],[78,74],[35,50],[65,50],[50,20]]},{id:'312',label:'3–1–2',positions:[[50,92],[22,74],[50,78],[78,74],[50,52],[35,22],[65,22]]},{id:'custom',label:'自由',positions:null}],
+      8:[{id:'331',label:'3–3–1',positions:[[50,92],[20,75],[50,78],[80,75],[22,50],[50,54],[78,50],[50,18]]},{id:'241',label:'2–4–1',positions:[[50,92],[30,74],[70,74],[15,48],[38,52],[62,52],[85,48],[50,18]]},{id:'322',label:'3–2–2',positions:[[50,92],[20,75],[50,78],[80,75],[35,50],[65,50],[35,20],[65,20]]},{id:'custom',label:'自由',positions:null}],
+      11:[{id:'433',label:'4–3–3',positions:[[50,94],[15,78],[38,82],[62,82],[85,78],[25,58],[50,62],[75,58],[18,30],[50,22],[82,30]]},{id:'4231',label:'4–2–3–1',positions:[[50,94],[15,78],[38,82],[62,82],[85,78],[38,62],[62,62],[20,42],[50,46],[80,42],[50,18]]},{id:'442',label:'4–4–2',positions:[[50,94],[15,78],[38,82],[62,82],[85,78],[15,52],[38,58],[62,58],[85,52],[35,24],[65,24]]},{id:'custom',label:'自由',positions:null}]
+    };
+    const currentPreset=()=>formationPresets[teamSize].find(item=>item.id===activeFormation)||formationPresets[teamSize][0];
+    const defaultPlayerNumber=i=>String(i+1);
     const playerNameKey=id=>teamSize+':'+id;
-    function makePlayer(i,pos,opp=false){const el=document.createElement('div'),id=(opp?'o':'p')+i,code=defaultPlayerCode(i,opp);el.className='player'+(opp?' opponent':'');el.textContent=code;el.style.left=pos[0]+'%';el.style.top=pos[1]+'%';el.dataset.id=id;el.dataset.defaultName=code;el.dataset.name=playerNames[playerNameKey(id)]||'';el.title=el.dataset.name||code;el.addEventListener('pointerdown',startDrag);el.addEventListener('click',e=>{if(activeTool!=='select')return;e.stopPropagation();selectPlayer(el);});pitch.appendChild(el);return el;}
-    function selectPlayer(el){pitch.querySelectorAll('.player').forEach(x=>x.classList.toggle('selected',x===el));selectedPlayer=el;document.getElementById('playerEditor').classList.remove('hidden');document.getElementById('playerEditorLabel').textContent='已选 '+(el.dataset.name||el.dataset.defaultName);document.getElementById('playerNameInput').value=el.dataset.name;document.getElementById('playerNameInput').placeholder='输入姓名或昵称';document.getElementById('playerNameInput').focus();}
-    function persistPlayerNames(){try{localStorage.setItem('footballLabPlayerNames',JSON.stringify(playerNames));}catch(_){}}
-    function applyPlayerName(name){if(!selectedPlayer)return;const value=name.trim().slice(0,12),key=playerNameKey(selectedPlayer.dataset.id);if(value)playerNames[key]=value;else delete playerNames[key];selectedPlayer.dataset.name=value;selectedPlayer.title=value||selectedPlayer.dataset.defaultName;document.getElementById('playerEditorLabel').textContent='已选 '+(value||selectedPlayer.dataset.defaultName);persistPlayerNames();showToast(value?'球员名称已保存':'已恢复默认名称');}
-    document.getElementById('savePlayerName').onclick=()=>applyPlayerName(document.getElementById('playerNameInput').value);
-    document.getElementById('playerNameInput').addEventListener('keydown',e=>{if(e.key==='Enter')applyPlayerName(e.target.value);});
-    document.getElementById('clearPlayerName').onclick=()=>{document.getElementById('playerNameInput').value='';applyPlayerName('');};
+    function renderFormationChooser(){document.getElementById('formationChooser').innerHTML=formationPresets[teamSize].map(item=>`<button class="formation ${item.id===activeFormation?'active':''}" data-form="${item.id}">${item.label}</button>`).join('');document.querySelectorAll('#formationChooser .formation').forEach(button=>button.onclick=()=>{activeFormation=button.dataset.form;renderFormationChooser();if(currentPreset().positions)setupPitch(currentPreset().positions);updatePitchHeader();});}
+    function makePlayer(i,pos){const el=document.createElement('div'),id='p'+i,key=playerNameKey(id),defaultNumber=defaultPlayerNumber(i),number=playerNumbers[key]||defaultNumber;el.className='player';el.textContent=number;el.style.left=pos[0]+'%';el.style.top=pos[1]+'%';el.dataset.id=id;el.dataset.defaultNumber=defaultNumber;el.dataset.number=number;el.dataset.name=playerNames[key]||'';el.title=el.dataset.name?`${number}号 · ${el.dataset.name}`:`${number}号`;el.addEventListener('pointerdown',startDrag);pitch.appendChild(el);return el;}
+    function renderLineupList(){const players=[...pitch.querySelectorAll('.player')];document.getElementById('lineupList').innerHTML=players.map(el=>`<button class="lineup-entry ${el===selectedPlayer?'active':''}" data-lineup-player="${el.dataset.id}"><span class="lineup-code">${el.dataset.number}</span><strong>${escapeHtml(el.dataset.name||'未命名球员')}</strong><small>${el.dataset.name?'已命名':'点选修改'}</small></button>`).join('');document.querySelectorAll('[data-lineup-player]').forEach(button=>button.onclick=()=>{const player=pitch.querySelector(`[data-id="${button.dataset.lineupPlayer}"]`);if(player)selectPlayer(player);});}
+    function selectPlayer(el){pitch.querySelectorAll('.player').forEach(x=>x.classList.toggle('selected',x===el));selectedPlayer=el;renderLineupList();if(tacticsMode!=='lineup'){document.getElementById('playerEditor').classList.add('hidden');return;}document.getElementById('playerEditor').classList.remove('hidden');document.getElementById('playerEditorLabel').textContent=`已选 ${el.dataset.number} 号${el.dataset.name?' · '+el.dataset.name:''}`;document.getElementById('playerNumberInput').value=el.dataset.number;document.getElementById('playerNameInput').value=el.dataset.name;}
+    function persistPlayerIdentity(){try{localStorage.setItem('footballLabPlayerNames',JSON.stringify(playerNames));localStorage.setItem('footballLabPlayerNumbers',JSON.stringify(playerNumbers));}catch(_){}}
+    function applyPlayerIdentity(){if(!selectedPlayer)return;const numberInput=document.getElementById('playerNumberInput'),number=numberInput.value.trim(),name=document.getElementById('playerNameInput').value.trim().slice(0,12);if(!/^\d{1,2}$/.test(number)){showToast('号码请输入 0–99');numberInput.focus();return;}const normalized=String(Number(number)),key=playerNameKey(selectedPlayer.dataset.id);if(normalized===selectedPlayer.dataset.defaultNumber)delete playerNumbers[key];else playerNumbers[key]=normalized;if(name)playerNames[key]=name;else delete playerNames[key];selectedPlayer.dataset.number=normalized;selectedPlayer.dataset.name=name;selectedPlayer.textContent=normalized;selectedPlayer.title=name?`${normalized}号 · ${name}`:`${normalized}号`;numberInput.value=normalized;document.getElementById('playerEditorLabel').textContent=`已选 ${normalized} 号${name?' · '+name:''}`;persistPlayerIdentity();renderLineupList();showToast('球员号码和名称已保存');}
+    document.getElementById('savePlayerName').onclick=applyPlayerIdentity;
+    ['playerNumberInput','playerNameInput'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();applyPlayerIdentity();}}));
+    document.getElementById('clearPlayerName').onclick=()=>{if(!selectedPlayer)return;document.getElementById('playerNumberInput').value=selectedPlayer.dataset.defaultNumber;document.getElementById('playerNameInput').value='';applyPlayerIdentity();};
     document.getElementById('selectNextPlayer').onclick=()=>{const players=[...pitch.querySelectorAll('.player')],index=Math.max(0,players.indexOf(selectedPlayer));selectPlayer(players[(index+1)%players.length]);};
-    function setupPitch(){pitch.querySelectorAll('.player,.ball,.drawing,.zone').forEach(x=>x.remove());selectedPlayer=null;document.getElementById('playerEditor').classList.add('hidden');const positions=layouts[teamSize];positions.forEach((p,i)=>makePlayer(i,p));const ball=document.createElement('div');ball.className='ball';ball.dataset.id='ball';ball.style.left='50%';ball.style.top='47%';ball.addEventListener('pointerdown',startDrag);pitch.appendChild(ball);frames=[];saveFrame(true);updateFrameList();}
-    function startDrag(e){if(activeTool!=='select')return;e.preventDefault();dragTarget=e.currentTarget;dragTarget.setPointerCapture(e.pointerId);dragTarget.onpointermove=moveDrag;dragTarget.onpointerup=()=>{dragTarget.onpointermove=null;dragTarget=null;};}
-    function moveDrag(e){if(!dragTarget)return;const r=pitch.getBoundingClientRect();dragTarget.style.left=Math.max(3,Math.min(97,(e.clientX-r.left)/r.width*100))+'%';dragTarget.style.top=Math.max(3,Math.min(97,(e.clientY-r.top)/r.height*100))+'%';}
-    pitch.addEventListener('click',e=>{if(activeTool==='select'||e.target.classList.contains('player')||e.target.classList.contains('ball'))return;const r=pitch.getBoundingClientRect(),p=[(e.clientX-r.left)/r.width*100,(e.clientY-r.top)/r.height*100];if(!drawStart){drawStart=p;showToast('请选择终点');return;} const x=Math.min(drawStart[0],p[0]),y=Math.min(drawStart[1],p[1]),w=Math.abs(p[0]-drawStart[0]),h=Math.abs(p[1]-drawStart[1]);if(activeTool==='zone'){const z=document.createElement('div');z.className='zone';Object.assign(z.style,{left:x+'%',top:y+'%',width:w+'%',height:h+'%'});pitch.appendChild(z);}else{const dx=p[0]-drawStart[0],dy=(p[1]-drawStart[1])*(r.height/r.width),len=Math.sqrt(dx*dx+dy*dy),angle=Math.atan2(dy,dx)*180/Math.PI;const d=document.createElement('div');d.className='drawing '+activeTool;Object.assign(d.style,{left:drawStart[0]+'%',top:drawStart[1]+'%',width:len+'%',transform:`rotate(${angle}deg)`});pitch.appendChild(d);}drawStart=null;});
+    function setupPitch(positions=currentPreset().positions||formationPresets[teamSize][0].positions){pitch.querySelectorAll('.player,.ball,.drawing,.zone').forEach(x=>x.remove());selectedPlayer=null;clearDrawStart();document.getElementById('playerEditor').classList.add('hidden');positions.forEach((position,i)=>makePlayer(i,position));const ball=document.createElement('div');ball.className='ball';ball.dataset.id='ball';ball.style.left='50%';ball.style.top='47%';ball.addEventListener('pointerdown',startDrag);pitch.appendChild(ball);frames=[];saveFrame(true);renderLineupList();updatePitchHeader();}
+    function loadMatchLineup(record){const saved=matchLineups[record.id],requestedSize=Number(String(saved?.teamSize||record.format||'7').match(/\d+/)?.[0]),supportedSize=[5,7,8,11].includes(requestedSize)?requestedSize:7;teamSize=supportedSize;activeFormation=saved?.formation&&formationPresets[teamSize].some(item=>item.id===saved.formation)?saved.formation:formationPresets[teamSize][0].id;document.querySelectorAll('#sizeChooser .segment').forEach(button=>button.classList.toggle('active',Number(button.dataset.size)===teamSize));renderFormationChooser();const positions=saved?.players?.map(player=>[player.left,player.top]);setupPitch(positions?.length===teamSize?positions:currentPreset().positions);if(saved?.players){[...pitch.querySelectorAll('.player')].forEach((player,index)=>{const source=saved.players[index];if(!source)return;player.dataset.number=source.number;player.dataset.name=source.name;player.textContent=source.number;player.title=source.name?`${source.number}号 · ${source.name}`:`${source.number}号`;});renderLineupList();}document.getElementById('lineupSaveStatus').textContent=saved?'已载入本场已保存阵容':'本场尚未保存首发阵容';}
+    function saveMatchLineup(){if(!activeTacticsMatchId||!activeTacticsMatchMeta){showToast('请先从某场比赛进入首发阵容');return;}matchLineups[activeTacticsMatchId]={teamSize,formation:activeFormation,savedAt:Date.now(),players:[...pitch.querySelectorAll('.player')].map(player=>({left:parseFloat(player.style.left),top:parseFloat(player.style.top),number:player.dataset.number,name:player.dataset.name||''}))};try{localStorage.setItem('footballLabMatchLineups',JSON.stringify(matchLineups));}catch(_){}document.getElementById('lineupSaveStatus').textContent=`已保存 · ${activeTacticsMatchMeta.date} vs ${activeTacticsMatchMeta.opponent}`;showToast('本场首发阵容已保存，之后可从赛程继续修改');}
+    function startDrag(e){if(activeTool!=='select')return;e.preventDefault();dragTarget=e.currentTarget;dragTarget.classList.add('dragging');dragTarget.setPointerCapture(e.pointerId);dragTarget.onpointermove=moveDrag;dragTarget.onpointerup=()=>{dragTarget.classList.remove('dragging');dragTarget.onpointermove=null;dragTarget=null;};}
+    function moveDrag(e){if(!dragTarget)return;const rect=pitch.getBoundingClientRect();dragTarget.style.left=Math.max(3,Math.min(97,(e.clientX-rect.left)/rect.width*100))+'%';dragTarget.style.top=Math.max(3,Math.min(97,(e.clientY-rect.top)/rect.height*100))+'%';}
+    function clearDrawStart(){drawStart=null;if(drawOriginElement)drawOriginElement.classList.remove('draw-origin');drawOriginElement=null;updateDrawStatus();}
+    function updateDrawStatus(){const status=document.getElementById('drawStatus');if(!status)return;if(activeTool==='select')status.textContent='拖动球员或足球，调整当前站位。';else if(activeTool==='zone')status.textContent=drawStart?'第 2 步：再点区域的对角。':'第 1 步：点一下区域的第一个角。';else status.textContent=drawStart?'第 2 步：点一下目标位置。':`第 1 步：点${activeTool==='pass'?'传球人或起点':'跑动球员或起点'}。`;document.getElementById('toolStatus').textContent=tacticsMode==='lineup'?'拖动球员排序':status.textContent;}
+    function handleDrawPoint(point,originElement=null){if(!drawStart){drawStart=point;drawOriginElement=originElement;if(drawOriginElement)drawOriginElement.classList.add('draw-origin');updateDrawStatus();return;}const start=drawStart,rect=pitch.getBoundingClientRect(),x=Math.min(start[0],point[0]),y=Math.min(start[1],point[1]),width=Math.abs(point[0]-start[0]),height=Math.abs(point[1]-start[1]);if(activeTool==='zone'){if(width<2||height<2){showToast('区域太小，请重新选择两个角');clearDrawStart();return;}const zone=document.createElement('div');zone.className='zone';Object.assign(zone.style,{left:x+'%',top:y+'%',width:width+'%',height:height+'%'});pitch.appendChild(zone);}else{const dx=point[0]-start[0],dy=(point[1]-start[1])*(rect.height/rect.width),length=Math.sqrt(dx*dx+dy*dy),angle=Math.atan2(dy,dx)*180/Math.PI;if(length<2){showToast('起点和终点太近');clearDrawStart();return;}const drawing=document.createElement('div');drawing.className='drawing '+activeTool;Object.assign(drawing.style,{left:start[0]+'%',top:start[1]+'%',width:length+'%',transform:`rotate(${angle}deg)`});pitch.appendChild(drawing);}clearDrawStart();}
+    pitch.addEventListener('click',e=>{const actor=e.target.closest('.player,.ball');if(activeTool==='select'){if(actor?.classList.contains('player'))selectPlayer(actor);return;}const rect=pitch.getBoundingClientRect(),point=actor?[parseFloat(actor.style.left),parseFloat(actor.style.top)]:[(e.clientX-rect.left)/rect.width*100,(e.clientY-rect.top)/rect.height*100];handleDrawPoint(point,actor);});
     function saveFrame(initial=false){const state=[...pitch.querySelectorAll('.player,.ball')].map(el=>({id:el.dataset.id,left:el.style.left,top:el.style.top}));if(initial&&frames.length===0)frames=[state];else frames.push(state);activeFrame=frames.length-1;updateFrameList();if(!initial)showToast('已保存关键帧 '+frames.length);}
-    function loadFrame(index){activeFrame=index;frames[index].forEach(p=>{const el=pitch.querySelector('[data-id="'+p.id+'"]');if(el){el.style.left=p.left;el.style.top=p.top;}});updateFrameList();}
-    function updateFrameList(){document.getElementById('frameList').innerHTML=frames.map((f,i)=>`<button class="frame ${i===activeFrame?'active':''}" data-frame="${i}"><span class="frame-num">${String(i+1).padStart(2,'0')}</span><span><strong>${i===0?'初始站位':'动作阶段 '+i}</strong><small>${f.length-1} 名球员 · 已保存</small></span><span>›</span></button>`).join('');document.querySelectorAll('[data-frame]').forEach(x=>x.onclick=()=>loadFrame(Number(x.dataset.frame)));}
-    function play(){if(frames.length<2){showToast('请先移动球员并添加至少 1 个关键帧');return;}loadFrame(0);let i=1;setTimeout(function next(){loadFrame(i);i++;if(i<frames.length)setTimeout(next,900);else showToast('战术动画播放完成');},500);}
-    document.querySelectorAll('#sizeChooser .segment').forEach(btn=>btn.onclick=()=>{teamSize=Number(btn.dataset.size);document.querySelectorAll('#sizeChooser .segment').forEach(x=>x.classList.toggle('active',x===btn));document.getElementById('pitchTitle').textContent=teamSize+'v'+teamSize+' · 阵型编辑';setupPitch();showToast('已切换为 '+teamSize+'v'+teamSize);});
-    document.querySelectorAll('#formationChooser .formation').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('#formationChooser .formation').forEach(x=>x.classList.toggle('active',x===btn));document.getElementById('pitchTitle').textContent=teamSize+'v'+teamSize+' · '+(btn.dataset.form==='custom'?'自由阵型':btn.textContent+' 进攻组织');if(btn.dataset.form!=='custom')setupPitch();});
-    const toolNames={select:'选择 / 拖拽',pass:'传球箭头',run:'跑动路线',zone:'区域'};
-    document.querySelectorAll('#toolChooser .tool').forEach(btn=>btn.onclick=()=>{activeTool=btn.dataset.tool;drawStart=null;document.querySelectorAll('#toolChooser .tool').forEach(x=>x.classList.toggle('active',x===btn));document.getElementById('toolStatus').textContent='当前：'+toolNames[activeTool];if(activeTool!=='select'){pitch.querySelectorAll('.player').forEach(x=>x.classList.remove('selected'));document.getElementById('playerEditor').classList.add('hidden');}});
-    document.getElementById('addFrame').onclick=()=>saveFrame();document.getElementById('playFrames').onclick=play;document.getElementById('playFrames2').onclick=play;document.getElementById('resetPitch').onclick=()=>{setupPitch();showToast('战术板已重置');};setupPitch();
+    function loadFrame(index){activeFrame=index;frames[index].forEach(point=>{const el=pitch.querySelector('[data-id="'+point.id+'"]');if(el){el.style.left=point.left;el.style.top=point.top;}});updateFrameList();}
+    function updateFrameList(){document.getElementById('frameList').innerHTML=frames.map((frame,i)=>`<button class="frame ${i===activeFrame?'active':''}" data-frame="${i}"><span class="frame-num">${String(i+1).padStart(2,'0')}</span><span><strong>${i===0?'初始站位':'动作阶段 '+i}</strong><small>${frame.length-1} 名球员 · 已保存</small></span><span>›</span></button>`).join('');document.querySelectorAll('[data-frame]').forEach(button=>button.onclick=()=>loadFrame(Number(button.dataset.frame)));}
+    function play(){if(frames.length<2){showToast('先移动球员，再保存至少 1 个关键帧');return;}loadFrame(0);let index=1;setTimeout(function next(){loadFrame(index);index++;if(index<frames.length)setTimeout(next,900);else showToast('战术预演播放完成');},500);}
+    function setTool(tool){activeTool=tool;clearDrawStart();document.querySelectorAll('#toolChooser .tool').forEach(button=>button.classList.toggle('active',button.dataset.tool===tool));if(tool!=='select'){pitch.querySelectorAll('.player').forEach(player=>player.classList.remove('selected'));selectedPlayer=null;document.getElementById('playerEditor').classList.add('hidden');}updateDrawStatus();}
+    function updatePitchHeader(){document.getElementById('pitchTitle').textContent=`${teamSize}v${teamSize} · ${currentPreset().label} ${tacticsMode==='lineup'?'首发阵容':'战术预演'}${tacticsMatchLabel?' · '+tacticsMatchLabel:''}`;document.getElementById('tacticPanelTitle').textContent=tacticsMode==='lineup'?'首发设置':'预演工具';updateDrawStatus();}
+    function setTacticsMode(mode){tacticsMode=mode;tacticsScreen.dataset.mode=mode;document.querySelectorAll('[data-tactics-mode]').forEach(button=>button.classList.toggle('active',button.dataset.tacticsMode===mode));document.getElementById('lineupControls').classList.toggle('hidden',mode!=='lineup');document.getElementById('lineupPanel').classList.toggle('hidden',mode!=='lineup');document.getElementById('rehearsalControls').classList.toggle('hidden',mode!=='rehearsal');document.getElementById('framesPanel').classList.toggle('hidden',mode!=='rehearsal');document.getElementById('playerEditor').classList.add('hidden');setTool('select');updatePitchHeader();}
+    function resetFormation(){activeFormation=formationPresets[teamSize][0].id;renderFormationChooser();setupPitch();}
+    function exportLineupImage(){const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d'),width=1080,height=1600,fieldX=80,fieldY=190,fieldWidth=920,fieldHeight=1320;canvas.width=width;canvas.height=height;ctx.fillStyle='#0b1613';ctx.fillRect(0,0,width,height);ctx.fillStyle='#eef6f1';ctx.font='700 54px system-ui, sans-serif';ctx.fillText('我的首发阵容',80,82);ctx.fillStyle='#b7ff52';ctx.font='600 30px system-ui, sans-serif';ctx.fillText(`${teamSize}v${teamSize} · ${currentPreset().label}`,80,132);for(let i=0;i<10;i++){ctx.fillStyle=i%2?'#236d48':'#216744';ctx.fillRect(fieldX,fieldY+i*fieldHeight/10,fieldWidth,fieldHeight/10);}ctx.strokeStyle='rgba(255,255,255,.9)';ctx.lineWidth=5;ctx.strokeRect(fieldX+28,fieldY+28,fieldWidth-56,fieldHeight-56);ctx.beginPath();ctx.moveTo(fieldX+28,fieldY+fieldHeight/2);ctx.lineTo(fieldX+fieldWidth-28,fieldY+fieldHeight/2);ctx.stroke();ctx.beginPath();ctx.arc(fieldX+fieldWidth/2,fieldY+fieldHeight/2,110,0,Math.PI*2);ctx.stroke();ctx.strokeRect(fieldX+fieldWidth*.27,fieldY+28,fieldWidth*.46,210);ctx.strokeRect(fieldX+fieldWidth*.27,fieldY+fieldHeight-238,fieldWidth*.46,210);[...pitch.querySelectorAll('.player')].forEach(player=>{const x=fieldX+parseFloat(player.style.left)/100*fieldWidth,y=fieldY+parseFloat(player.style.top)/100*fieldHeight,name=player.dataset.name||`${player.dataset.number}号`;ctx.fillStyle='#f5fbf7';ctx.strokeStyle='#0e3221';ctx.lineWidth=8;ctx.beginPath();ctx.arc(x,y,34,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle='#0f251a';ctx.font='800 22px system-ui, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(player.dataset.number,x,y);ctx.font='700 24px system-ui, sans-serif';const labelWidth=Math.max(86,ctx.measureText(name).width+30);ctx.fillStyle='rgba(7,16,13,.88)';ctx.fillRect(x-labelWidth/2,y+45,labelWidth,42);ctx.fillStyle='#f1f7f3';ctx.fillText(name,x,y+66);});ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillStyle='#91a49c';ctx.font='500 24px system-ui, sans-serif';ctx.fillText(new Date().toLocaleDateString('zh-CN'),80,1560);const link=document.createElement('a');link.download=`首发阵容-${teamSize}v${teamSize}.png`;link.href=canvas.toDataURL('image/png');link.click();showToast('阵容图已导出');}
+    function exportNamedLineup(){const meta=activeTacticsMatchMeta;if(!meta){exportLineupImage();return;}const filename=`${meta.date}法学院vs${meta.opponent}首发阵容.png`.replace(/[\\/:*?"<>|]/g,'-'),nativeCreate=document.createElement.bind(document);document.createElement=(tag,...args)=>{const element=nativeCreate(tag,...args);if(String(tag).toLowerCase()==='a')Object.defineProperty(element,'download',{configurable:true,get(){return this.getAttribute('download')||'';},set(){this.setAttribute('download',filename);}});return element;};try{exportLineupImage();}finally{document.createElement=nativeCreate;}}
+    document.querySelectorAll('#sizeChooser .segment').forEach(button=>button.onclick=()=>{teamSize=Number(button.dataset.size);activeFormation=formationPresets[teamSize][0].id;document.querySelectorAll('#sizeChooser .segment').forEach(item=>item.classList.toggle('active',item===button));renderFormationChooser();setupPitch();showToast('已切换为 '+teamSize+'v'+teamSize);});
+    document.querySelectorAll('#toolChooser .tool').forEach(button=>button.onclick=()=>setTool(button.dataset.tool));
+    document.querySelectorAll('[data-tactics-mode]').forEach(button=>button.onclick=()=>setTacticsMode(button.dataset.tacticsMode));
+    document.getElementById('undoDrawing').onclick=()=>{const drawings=pitch.querySelectorAll('.drawing,.zone'),last=drawings[drawings.length-1];if(last){last.remove();showToast('已撤销最后一次绘制');}else showToast('暂无可撤销的绘制');};
+    document.getElementById('clearDrawings').onclick=()=>{pitch.querySelectorAll('.drawing,.zone').forEach(item=>item.remove());clearDrawStart();showToast('绘制内容已清空');};
+    document.getElementById('addFrame').onclick=()=>saveFrame();document.getElementById('playFrames2').onclick=play;document.getElementById('resetPitch').onclick=()=>{resetFormation();showToast('战术板已重置');};document.getElementById('resetLineup').onclick=()=>{resetFormation();showToast('首发阵容已恢复');};document.getElementById('saveMatchLineup').onclick=saveMatchLineup;document.getElementById('saveMatchLineup2').onclick=saveMatchLineup;document.getElementById('saveMatchRehearsal').onclick=()=>showToast('战术预演保存入口已保留，功能将在后续开发');document.getElementById('exportLineup').onclick=exportNamedLineup;document.getElementById('exportLineup2').onclick=exportNamedLineup;
+    renderFormationChooser();setupPitch();setTacticsMode('lineup');
 
     // Let supported AI browsers operate the same core journeys as the visible prototype.
     const modelContext = document.modelContext;
