@@ -49,6 +49,30 @@ npm start
 
 默认地址为 `http://127.0.0.1:4173/`。个人数据始终保存在访问该地址的浏览器内。
 
+## EdgeOne 发布
+
+项目包含 EdgeOne Pages 适配层。生成可直接上传的发布包：
+
+```bash
+npm run build:edgeone
+```
+
+生成目录为 `edgeone-dist`。部署时需要在 EdgeOne 项目中配置服务器环境变量
+`FOOTBALL_DATA_TOKEN`，个人训练、比赛和照片数据仍只保存在访问者自己的浏览器中。
+
+EdgeOne 的系统项目域名在“全球可用区（含中国大陆）”仅提供限时预览链接；长期公开访问需要绑定已备案的自有域名。
+
+## GitHub Pages 发布
+
+没有自有域名时，可将静态版本发布到 GitHub Pages。先更新公开赛程快照，再生成 `docs` 目录：
+
+```bash
+npm run update:football-data
+npm run build:pages
+```
+
+GitHub Pages 版本从同仓库的静态 JSON 读取球队和下一场比赛，不会在浏览器中暴露 Football-Data.org API Token。个人数据仍只保存在浏览器本地。
+
 ## 开源许可
 
 本项目使用 [MIT License](LICENSE)。部署所需的 API Token 和用户浏览器内的本地数据不包含在开源仓库中。
